@@ -48,20 +48,6 @@ class StudyMaterialsApp {
                 this.closeModal();
             }
         });
-        
-        // Handle fullscreen change events
-        document.addEventListener('fullscreenchange', () => this.handleFullscreenChange());
-        document.addEventListener('webkitfullscreenchange', () => this.handleFullscreenChange());
-        document.addEventListener('msfullscreenchange', () => this.handleFullscreenChange());
-    }
-    
-    handleFullscreenChange() {
-        // If user exits fullscreen manually (e.g., pressing Esc), close the modal
-        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            if (this.elements.modal.classList.contains('active')) {
-                this.closeModal();
-            }
-        }
     }
     
     setupPWA() {
@@ -170,40 +156,9 @@ class StudyMaterialsApp {
         this.elements.pdfTitle.textContent = title;
         this.elements.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
-        
-        // Request fullscreen on desktop devices (screen width > 768px)
-        if (window.innerWidth > 768) {
-            this.requestFullscreen();
-        }
-    }
-    
-    requestFullscreen() {
-        const elem = this.elements.modal;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(() => {
-                // Fullscreen request failed - user may have denied permission
-            });
-        } else if (elem.webkitRequestFullscreen) {
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
-        }
-    }
-    
-    exitFullscreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
     }
     
     closeModal() {
-        this.exitFullscreen();
         this.elements.modal.classList.remove('active');
         this.elements.pdfViewer.src = '';
         this.elements.pdfTitle.textContent = '';
