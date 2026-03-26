@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.1] - 2026-03-26
+
+### Changed
+- Removed debug console.log statements from production code
+- Removed emoji from README for professional presentation
+- Cleaned up service worker error handling
+- Fixed manifest.json icon sizes to match actual file dimensions (500x500)
+- Removed IDE-specific .vscode directory from repository
+- Improved code comments for clarity
+
+### Fixed
+- Service worker registration error handling now silent
+- PDF modal error handling streamlined without debug output
+
 ## [1.2.0] - 2026-03-26
 
 ### Added
