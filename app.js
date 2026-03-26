@@ -155,38 +155,29 @@ class StudyMaterialsApp {
     }
     
     openModal(url, title) {
-        // Store current PDF URL for download
         this.currentPdfUrl = decodeURIComponent(url);
         
-        // Try to open in iframe first
         this.elements.pdfViewer.src = this.currentPdfUrl;
         this.elements.pdfTitle.textContent = title;
         this.elements.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
-        // Add error handler for iframe load failure
         const iframe = this.elements.pdfViewer;
         const errorHandler = () => {
-            // If iframe fails to load, open PDF in new tab instead
-            console.log('PDF failed to load in iframe, opening in new tab');
             window.open(this.currentPdfUrl, '_blank');
             this.closeModal();
         };
         
-        // Set a timeout to check if PDF loaded
         const loadTimeout = setTimeout(() => {
             try {
-                // Check if iframe loaded successfully
                 if (!iframe.contentDocument && !iframe.contentWindow) {
                     errorHandler();
                 }
             } catch (e) {
-                // Cross-origin error means PDF might be loading
-                console.log('PDF loading in iframe');
+                // Cross-origin restriction - PDF is loading normally
             }
         }, 3000);
         
-        // Clear timeout if load succeeds
         iframe.onload = () => {
             clearTimeout(loadTimeout);
         };
