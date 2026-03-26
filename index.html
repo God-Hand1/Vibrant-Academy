@@ -59,7 +59,7 @@
                     </svg>
                 </button>
             </div>
-            <iframe id="pdfViewer" title="PDF Viewer" frameborder="0"></iframe>
+            <iframe id="pdfViewer" title="PDF Viewer" ></iframe>
         </div>
     </div>
 
@@ -71,7 +71,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js').catch(() => {
-                    // Service worker registration failed - app will work without offline support
+                    
                 });
             });
         }
