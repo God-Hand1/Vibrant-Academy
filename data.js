@@ -75,21 +75,27 @@ STUDY_MATERIALS[12] = {
     Physics: {
         categories: {
             'Electromagnetism': [
-                { name: 'Electrostatics', file: 'Vibrant Academy Modules/Class 12th/Physics/Electrostatics_mega_XII.pdf' },
-                { name: 'Current Electricity', file: 'Vibrant Academy Modules/Class 12th/Physics/Current electricity_mega_XII.pdf' },
-                { name: 'Magnetic Effect of Current', file: 'Vibrant Academy Modules/Class 12th/Physics/Magnetic effect of current_mega_XII.pdf' },
-                { name: 'Electromagnetic Induction', file: 'Vibrant Academy Modules/Class 12th/Physics/Electromagnetic induction_mega_XII.pdf' },
-                { name: 'Alternating Current', file: 'Vibrant Academy Modules/Class 12th/Physics/Alternating current_mega_XII.pdf' }
+                { name: 'Electrostatics', file: 'Vibrant Academy Modules/Class 12th/Physics/Electrostatics_Mega_XII.pdf' },
+                { name: 'Capacitance', file: 'Vibrant Academy Modules/Class 12th/Physics/Capacitance_Mega_XII.pdf' },
+                { name: 'Current Electricity', file: 'Vibrant Academy Modules/Class 12th/Physics/Current electricity_Mega_XII.pdf' },
+                { name: 'Magnetic Effect of Current', file: 'Vibrant Academy Modules/Class 12th/Physics/Magnetic effect of current_Mega_XII.pdf' },
+                { name: 'Magnetic Properties of Matter & Electromagnetic Waves', file: 'Vibrant Academy Modules/Class 12th/Physics/MAGNETIC PROPERTIES OF MATTER & electromagnetic waves_Mega_XII.pdf' },
+                { name: 'Electromagnetic Induction & Alternating Current', file: 'Vibrant Academy Modules/Class 12th/Physics/Electromagnetic induction & Alternating Current_Mega_XII.pdf' }
             ],
             'Optics': [
-                { name: 'Ray Optics', file: 'Vibrant Academy Modules/Class 12th/Physics/Ray optics_mega_XII.pdf' },
-                { name: 'Wave Optics', file: 'Vibrant Academy Modules/Class 12th/Physics/Wave optics_mega_XII.pdf' }
+                { name: 'Geometrical Optics', file: 'Vibrant Academy Modules/Class 12th/Physics/Geometrical Optics_Mega_XII.pdf' },
+                { name: 'Wave Optics (Interference of Light)', file: 'Vibrant Academy Modules/Class 12th/Physics/Wave Optics (Interference of Light)_Mega_XII.pdf' },
+                { name: 'Diffraction & Polarisation', file: 'Vibrant Academy Modules/Class 12th/Physics/Diffraction & PolarIsation_Mega_XII.pdf' },
+                { name: 'Optical Instruments', file: 'Vibrant Academy Modules/Class 12th/Physics/Optical Instruments_Mega_XII.pdf' }
             ],
             'Modern Physics': [
-                { name: 'Photoelectric Effect', file: 'Vibrant Academy Modules/Class 12th/Physics/Photoelectric effect_mega_XII.pdf' },
-                { name: 'Atomic Physics', file: 'Vibrant Academy Modules/Class 12th/Physics/Atomic physics_mega_XII.pdf' },
-                { name: 'Nuclear Physics', file: 'Vibrant Academy Modules/Class 12th/Physics/Nuclear physics_mega_XII.pdf' },
-                { name: 'Semiconductor', file: 'Vibrant Academy Modules/Class 12th/Physics/Semiconductor_mega_XII.pdf' }
+                { name: 'Modern Physics', file: 'Vibrant Academy Modules/Class 12th/Physics/Modern physics_Mega_XII.pdf' },
+                { name: 'Semiconductor', file: 'Vibrant Academy Modules/Class 12th/Physics/Semi conductor_Mega_XII.pdf' }
+            ],
+            'Mechanics & Others': [
+                { name: 'Gravitation', file: 'Vibrant Academy Modules/Class 12th/Physics/Gravitation_Mega_XII.pdf' },
+                { name: 'Surface Tension & Viscosity', file: 'Vibrant Academy Modules/Class 12th/Physics/Surface Tension & Viscosity_Mega_XII.pdf' },
+                { name: 'Errors in Measurements & Instruments', file: 'Vibrant Academy Modules/Class 12th/Physics/Errors in Measurements & Instruments_Mega_XII.pdf' }
             ]
         }
     },
@@ -139,21 +145,24 @@ STUDY_MATERIALS[12].Chemistry.categories['Organic Chemistry'] = [
 STUDY_MATERIALS[12].Mathematics = {
     categories: {
         'Calculus': [
-            { name: 'Limit, Continuity & Differentiability', file: 'Vibrant Academy Modules/Class 12th/Mathematics/LIMIT, CONTINUITY & DIFFERENTIABILITY_MEGA_XII.pdf' },
-            { name: 'Method of Differentiation', file: 'Vibrant Academy Modules/Class 12th/Mathematics/METHOD OF DIFFERENTIATION_MEGA_XII.pdf' },
-            { name: 'Application of Derivatives', file: 'Vibrant Academy Modules/Class 12th/Mathematics/APPLICATION OF DERIVATIVES_MEGA_XII.pdf' },
-            { name: 'Indefinite Integration', file: 'Vibrant Academy Modules/Class 12th/Mathematics/INDEFINITE INTEGRATION_MEGA_XII.pdf' },
-            { name: 'Definite Integration', file: 'Vibrant Academy Modules/Class 12th/Mathematics/DEFINITE INTEGRATION_MEGA_XII.pdf' },
-            { name: 'Area Under Curve', file: 'Vibrant Academy Modules/Class 12th/Mathematics/AREA UNDER CURVE_MEGA_XII.pdf' },
-            { name: 'Differential Equation', file: 'Vibrant Academy Modules/Class 12th/Mathematics/DIFFERENTIAL EQUATION_MEGA_XII.pdf' }
+            { name: 'Functions', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Functions_Mega_XII.pdf' },
+            { name: 'Inverse Trigonometric Functions', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Inverse trigonometric functions_Mega_XII.pdf' },
+            { name: 'Limit, Continuity & Differentiability', file: 'Vibrant Academy Modules/Class 12th/Mathematics/limit, ContInuity & Differentiability_Mega_XII..pdf' },
+            { name: 'Method of Differentiation', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Method of differentiation_Mega_XII.pdf' },
+            { name: 'Application of Derivatives', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Application of derivative_Mega_XII.pdf' },
+            { name: 'Indefinite & Definite Integration', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Indefinite & Definite Integration_Mega_XII.pdf' },
+            { name: 'Differential Equation & Area Under the Curve', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Differential Equation & area under the curve_Mega_XII.pdf' }
         ],
         'Algebra & Vectors': [
-            { name: 'Matrices', file: 'Vibrant Academy Modules/Class 12th/Mathematics/MATRICES_MEGA_XII.pdf' },
-            { name: 'Vector Algebra', file: 'Vibrant Academy Modules/Class 12th/Mathematics/VECTOR ALGEBRA_MEGA_XII.pdf' },
-            { name: 'Probability', file: 'Vibrant Academy Modules/Class 12th/Mathematics/PROBABILITY_MEGA_XII.pdf' }
+            { name: 'Complex Numbers', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Complex numbers_Mega_XII.pdf' },
+            { name: 'Determinant', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Determinant_Mega_XII.pdf' },
+            { name: 'Matrices', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Matrices_Mega_XII.pdf' },
+            { name: 'Vectors & 3-D', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Vectors & 3-D_Mega_XII.pdf' },
+            { name: 'Probability', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Probability_Mega_XII.pdf' },
+            { name: 'Statistics', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Statistics_Mega_XII.pdf' }
         ],
-        '3D Geometry': [
-            { name: '3D Geometry', file: 'Vibrant Academy Modules/Class 12th/Mathematics/3D GEOMETRY_MEGA_XII.pdf' }
+        'Coordinate Geometry': [
+            { name: 'Conic Section (Parabola, Ellipse & Hyperbola)', file: 'Vibrant Academy Modules/Class 12th/Mathematics/Conic Section_(Parabola, Ellipse & Hyperbola)_Mega_XII.pdf' }
         ]
     }
 };
