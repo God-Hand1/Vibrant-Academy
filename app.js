@@ -97,7 +97,7 @@ class StudyMaterialsApp {
         document.getElementById('installBtn').addEventListener('click', async () => {
             if (this.deferredPrompt) {
                 this.deferredPrompt.prompt();
-                const { outcome } = await this.deferredPrompt.userChoice;
+                await this.deferredPrompt.userChoice;
                 this.deferredPrompt = null;
                 installBanner.remove();
             }
@@ -180,8 +180,8 @@ class StudyMaterialsApp {
     requestFullscreen() {
         const elem = this.elements.modal;
         if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(err => {
-                console.log('Fullscreen request failed:', err);
+            elem.requestFullscreen().catch(() => {
+                // Fullscreen request failed - user may have denied permission
             });
         } else if (elem.webkitRequestFullscreen) {
             elem.webkitRequestFullscreen();
