@@ -424,6 +424,26 @@ body {
     }
 }
 
+/* Fullscreen styles for desktop */
+.modal:fullscreen .modal-content,
+.modal:-webkit-full-screen .modal-content,
+.modal:-moz-full-screen .modal-content,
+.modal:-ms-fullscreen .modal-content {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+}
+
+.modal:fullscreen .modal-overlay,
+.modal:-webkit-full-screen .modal-overlay,
+.modal:-moz-full-screen .modal-overlay,
+.modal:-ms-fullscreen .modal-overlay {
+    display: none;
+}
+
 
 .download-btn {
     margin-top: 16px;
