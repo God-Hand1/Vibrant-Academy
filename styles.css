@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overscroll-behavior: none;
+}
+
 :root {
     --bg: #0a0a0a;
     --surface: #111;
@@ -23,6 +27,7 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: contain;
 }
 
 .nav {
