@@ -1,15 +1,15 @@
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v1.1.0';
+const CACHE_NAME = 'vibrant-academy-v1.1.1';
 const ASSETS_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/config.js',
-    '/data.js',
-    '/app.js',
-    '/icon/logo.png',
-    '/manifest.json'
+    './',
+    './index.html',
+    './styles.css',
+    './config.js',
+    './data.js',
+    './app.js',
+    './icon/logo.png',
+    './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
