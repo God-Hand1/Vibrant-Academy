@@ -24,11 +24,11 @@ const STUDY_MATERIALS = {
         Chemistry: {
             categories: {
                 'Physical Chemistry': [
-                    { name: 'Atomic Structure', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry /ATOMIC STRUCTURE_MICRO_XI.pdf' },
-                    { name: 'Stoichiometry-I (Mole Concept)', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry /STOICHIOMETRY-I_(MOLE CONCEPT)_MICRO_XI.pdf' },
-                    { name: 'Gaseous State', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry /GASEOUS STATE_MICRO_XI.pdf' },
-                    { name: 'Chemical Equilibrium', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry /CHEMICAL EQUILIBRIUM_MICRO_XI.pdf' },
-                    { name: 'Ionic Equilibrium', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry /IONIC EQUILIBRIUM_MICRO_XI.pdf' }
+                    { name: 'Atomic Structure', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/ATOMIC STRUCTURE_MICRO_XI.pdf' },
+                    { name: 'Stoichiometry-I (Mole Concept)', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/STOICHIOMETRY-I_(MOLE CONCEPT)_MICRO_XI.pdf' },
+                    { name: 'Gaseous State', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/GASEOUS STATE_MICRO_XI.pdf' },
+                    { name: 'Chemical Equilibrium', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/CHEMICAL EQUILIBRIUM_MICRO_XI.pdf' },
+                    { name: 'Ionic Equilibrium', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/IONIC EQUILIBRIUM_MICRO_XI.pdf' }
                 ],
                 'Inorganic Chemistry': [
                     { name: 'Periodic Properties', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Inorganic Chemistry/PERIODIC PROPERTIES_MICRO_XI.pdf' },
