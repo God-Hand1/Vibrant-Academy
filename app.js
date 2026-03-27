@@ -155,7 +155,16 @@ class StudyMaterialsApp {
     }
     
     openModal(url, title) {
-        this.currentPdfUrl = decodeURIComponent(url);
+        // Decode the URL properly - handle double encoding
+        let decodedUrl = url;
+        try {
+            decodedUrl = decodeURIComponent(url);
+        } catch (e) {
+            console.error('Error decoding URL:', e);
+            decodedUrl = url;
+        }
+        
+        this.currentPdfUrl = decodedUrl;
         this.elements.pdfTitle.textContent = title;
         this.elements.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -170,6 +179,7 @@ class StudyMaterialsApp {
             
             const iframe = this.elements.pdfViewer;
             const errorHandler = () => {
+                console.error('PDF failed to load:', this.currentPdfUrl);
                 window.open(this.currentPdfUrl, '_blank');
                 this.closeModal();
             };
