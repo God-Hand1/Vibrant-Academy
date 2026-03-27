@@ -19,5 +19,9 @@ const SUBJECT_CONFIG = {
     Mathematics: {
         icon: 'M',
         color: 'mathematics'
+    },
+    Resources: {
+        icon: 'R',
+        color: 'resources'
     }
 };
