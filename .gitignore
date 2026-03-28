@@ -12,9 +12,6 @@ desktop.ini
 *~
 
 # IDE and Editor Files
-.vscode/
-!.vscode/extensions.json
-!.vscode/launch.json
 .idea/
 *.sublime-project
 *.sublime-workspace
@@ -106,3 +103,21 @@ test123.*
 # Note: ZIP files in "Vibrant Academy Modules" are intentionally tracked
 *.zip
 !Vibrant\ Academy\ Modules/**/*.zip
+
+# VSCode Settings (project-specific settings can be shared if needed)
+.vscode/
+
+# Development and Testing Scripts
+*.sh
+test-*.html
+find_issues.py
+validate.*
+final-verification.*
+*_test.*
+*_debug.*
+*_temp.*
+
+# Documentation (Development Only)
+BUG_REPORT.md
+DEBUG_FIXES.md
+FIXES_APPLIED.md
