@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.4.2] - 2026-03-28
+
+### Added
+- **Rotation Support:** PWA now respects device auto-rotate settings
+  - Changed orientation from "portrait-primary" to "any" in manifest
+  - Added landscape-specific media queries for optimal viewing
+  - Optimized layout for landscape mode on phones and tablets
+  - Better spacing and grid layout in landscape orientation
+
+### Changed
+- **Landscape Optimizations:**
+  - Reduced vertical padding when height < 600px in landscape
+  - Adjusted grid columns for better content distribution
+  - Optimized modal header for landscape viewing
+  - Better navigation bar spacing in landscape
+  - Improved subject card layout in landscape mode
+
+### Technical Details
+- Added 4 landscape-specific media queries
+- Responsive grid: minmax(320px, 1fr) in landscape
+- Maintains all functionality across orientations
+- Smooth transitions when rotating device
+
 ## [1.4.1] - 2026-03-28
 
 ### Fixed
