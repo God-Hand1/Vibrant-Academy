@@ -62,7 +62,6 @@ class StudyMaterialsApp {
         const missing = required.filter(key => !this.elements[key]);
         
         if (missing.length > 0) {
-            console.error('Missing required elements:', missing);
             return false;
         }
         
@@ -80,7 +79,6 @@ class StudyMaterialsApp {
             this.updateDownloadButton();
             this.render();
         } catch (error) {
-            console.error('Initialization error:', error);
             this.showError('Failed to initialize application');
         }
     }
@@ -251,16 +249,9 @@ class StudyMaterialsApp {
             await this.deferredPrompt.prompt();
             const { outcome } = await this.deferredPrompt.userChoice;
             
-            if (outcome === 'accepted') {
-                console.log('User accepted the install prompt');
-            } else {
-                console.log('User dismissed the install prompt');
-            }
-            
             this.deferredPrompt = null;
             this.hideInstallPrompt();
         } catch (error) {
-            console.error('Install prompt error:', error);
             this.showNotification('Installation failed', 'error');
         }
     }
@@ -337,7 +328,6 @@ class StudyMaterialsApp {
             
             this.showNotification('Download started', 'success');
         } catch (error) {
-            console.error('Download error:', error);
             this.showNotification('Download failed', 'error');
         }
     }
@@ -409,7 +399,6 @@ class StudyMaterialsApp {
         try {
             decodedUrl = decodeURIComponent(url);
         } catch (e) {
-            console.warn('URL decode failed, using original:', e);
             decodedUrl = url;
         }
         
@@ -452,7 +441,6 @@ class StudyMaterialsApp {
         
         const errorHandler = () => {
             if (timeoutCleared) return;
-            console.warn('PDF failed to load in iframe, opening in new tab');
             window.open(url, '_blank', 'noopener,noreferrer');
             this.closeModal();
         };
@@ -507,7 +495,6 @@ class StudyMaterialsApp {
             
             this.showNotification('Download started', 'success');
         } catch (error) {
-            console.error('PDF download error:', error);
             this.showNotification('Download failed', 'error');
         }
     }
@@ -727,7 +714,6 @@ class StudyMaterialsApp {
      * @param {string} message - Error message
      */
     showError(message) {
-        console.error(message);
         if (this.elements.content) {
             this.elements.content.innerHTML = `<div class="empty error">${this.sanitizeText(message)}</div>`;
         }
@@ -739,20 +725,9 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         window.app = new StudyMaterialsApp();
     } catch (error) {
-        console.error('Failed to initialize app:', error);
         const content = document.getElementById('content');
         if (content) {
             content.innerHTML = '<div class="empty error">Failed to load application. Please refresh the page.</div>';
         }
     }
-});
-
-// Global error handler
-window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error);
-});
-
-// Unhandled promise rejection handler
-window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason);
 });
