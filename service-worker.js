@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v1.4.0';
+const CACHE_NAME = 'vibrant-academy-v1.4.3';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
