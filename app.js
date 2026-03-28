@@ -430,6 +430,8 @@ class StudyMaterialsApp {
     
     /**
      * Load PDF in iframe with error handling
+     * Note: Cookie/storage warnings in console are expected when loading PDFs in iframes
+     * due to third-party context restrictions. This is normal browser behavior.
      * @param {string} url - PDF URL
      */
     loadPdfInIframe(url) {
