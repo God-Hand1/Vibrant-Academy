@@ -28,6 +28,100 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior-y: contain;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Performance optimizations */
+.subject,
+.item,
+.cat,
+.tab,
+.modal-content {
+    will-change: transform, opacity;
+}
+
+/* Hardware acceleration for animations */
+@media (prefers-reduced-motion: no-preference) {
+    .subject,
+    .item,
+    .icon,
+    .pdf-badge,
+    .tab,
+    .modal-content,
+    .modal-overlay {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+    }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .nav {
@@ -37,6 +131,8 @@ body {
     background: rgba(10, 10, 10, 0.8);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    opacity: 0;
+    animation: slideDown 0.6s ease-out 0.1s forwards;
 }
 
 .nav-wrap {
@@ -60,6 +156,13 @@ body {
     border-radius: 8px;
     object-fit: contain;
     flex-shrink: 0;
+    transition: all 0.3s ease;
+    opacity: 0;
+    animation: scaleIn 0.6s ease-out 0.15s forwards;
+}
+
+.brand-logo:hover {
+    transform: scale(1.05) rotate(5deg);
 }
 
 .brand-name {
@@ -67,6 +170,8 @@ body {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.02em;
+    opacity: 0;
+    animation: slideDown 0.6s ease-out 0.2s forwards;
 }
 
 .class-tabs {
@@ -75,6 +180,8 @@ body {
     background: var(--surface);
     padding: 4px;
     border-radius: 12px;
+    opacity: 0;
+    animation: slideDown 0.6s ease-out 0.25s forwards;
 }
 
 .tab {
@@ -88,10 +195,26 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: -1;
 }
 
 .tab:hover {
     color: var(--text);
+}
+
+.tab:hover::before {
+    opacity: 0.1;
 }
 
 .tab.active {
@@ -99,10 +222,16 @@ body {
     color: var(--text);
 }
 
+.tab.active::before {
+    opacity: 1;
+}
+
 .hero {
     padding: 60px 24px 40px;
     max-width: 1400px;
     margin: 0 auto;
+    opacity: 0;
+    animation: slideUp 0.6s ease-out 0.2s forwards;
 }
 
 .hero-wrap {
@@ -120,12 +249,16 @@ body {
     font-size: 16px;
     font-family: inherit;
     transition: all 0.2s;
+    opacity: 0;
+    animation: slideUp 0.6s ease-out 0.3s forwards;
 }
 
 .search:focus {
     outline: none;
     border-color: rgba(255, 255, 255, 0.2);
     background: var(--card);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .search::placeholder {
@@ -136,6 +269,8 @@ body {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 24px 80px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.4s forwards;
 }
 
 .grid {
@@ -150,11 +285,17 @@ body {
     border-radius: 20px;
     padding: 28px;
     transition: all 0.3s;
+    opacity: 0;
+    animation: scaleIn 0.5s ease-out forwards;
 }
 
 .subject:hover {
     border-color: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
+}
+
+.subject.animate-in {
+    animation: scaleIn 0.5s ease-out forwards;
 }
 
 .subject-head {
@@ -176,6 +317,26 @@ body {
     font-weight: 700;
     font-size: 18px;
     flex-shrink: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.subject:hover .icon::before {
+    opacity: 1;
+}
+
+.subject:hover .icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .icon.physics {
@@ -206,10 +367,16 @@ body {
 
 .cat {
     margin-bottom: 20px;
+    opacity: 0;
+    animation: slideUp 0.4s ease-out forwards;
 }
 
 .cat:last-child {
     margin-bottom: 0;
+}
+
+.cat.animate-in {
+    animation: slideUp 0.4s ease-out forwards;
 }
 
 .cat-title {
@@ -238,12 +405,18 @@ body {
     color: var(--text);
     transition: all 0.2s;
     border: 1px solid transparent;
+    opacity: 0;
+    animation: slideUp 0.3s ease-out forwards;
 }
 
 .item:hover {
     background: rgba(255, 255, 255, 0.06);
     border-color: rgba(255, 255, 255, 0.1);
     transform: translateX(4px);
+}
+
+.item.animate-in {
+    animation: slideUp 0.3s ease-out forwards;
 }
 
 .pdf-badge {
@@ -257,6 +430,27 @@ body {
     font-size: 10px;
     font-weight: 700;
     flex-shrink: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.pdf-badge::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.item:hover .pdf-badge {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(255, 51, 102, 0.4);
+}
+
+.item:hover .pdf-badge::before {
+    opacity: 1;
 }
 
 .item-name {
@@ -281,6 +475,8 @@ body {
     text-align: center;
     padding: 80px 20px;
     color: var(--text-dim);
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out 0.2s forwards;
 }
 
 @media (max-width: 768px) {
@@ -362,10 +558,12 @@ body {
     inset: 0;
     z-index: 1000;
     display: none;
+    opacity: 0;
 }
 
 .modal.active {
     display: block;
+    animation: fadeIn 0.2s ease-out forwards;
 }
 
 .modal-overlay {
@@ -373,6 +571,11 @@ body {
     inset: 0;
     background: rgba(0, 0, 0, 0.95);
     z-index: 1001;
+    opacity: 0;
+}
+
+.modal.active .modal-overlay {
+    animation: fadeIn 0.2s ease-out forwards;
 }
 
 .modal-content {
@@ -382,6 +585,12 @@ body {
     z-index: 1002;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.modal.active .modal-content {
+    animation: scaleIn 0.3s ease-out 0.1s forwards;
 }
 
 .modal-header {
@@ -426,12 +635,38 @@ body {
     transition: all 0.2s;
     border: 1px solid rgba(255, 255, 255, 0.08);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-download::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--physics);
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
 .modal-download:hover {
     background: rgba(0, 212, 255, 0.2);
     border-color: var(--physics);
     color: var(--physics);
+    transform: translateY(-2px);
+}
+
+.modal-download:hover::before {
+    opacity: 0.2;
+}
+
+.modal-download svg {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.modal-download:hover svg {
+    transform: translateY(2px);
 }
 
 .modal-close {
@@ -448,11 +683,32 @@ body {
     transition: all 0.2s;
     border: 1px solid rgba(255, 255, 255, 0.08);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.modal-close::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
 .modal-close:hover {
     background: var(--accent);
     border-color: var(--accent);
+    transform: rotate(90deg);
+}
+
+.modal-close:hover::before {
+    opacity: 1;
+}
+
+.modal-close svg {
+    position: relative;
+    z-index: 1;
 }
 
 #pdfViewer {
@@ -500,6 +756,8 @@ body {
     justify-content: center;
     gap: 10px;
     transition: all 0.2s;
+    opacity: 0;
+    animation: slideUp 0.6s ease-out 0.4s forwards;
 }
 
 .download-btn:hover {
@@ -513,6 +771,21 @@ body {
 
 .download-btn svg {
     flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.download-btn:hover svg {
+    transform: translateY(2px);
+    animation: bounce 0.6s ease infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(2px);
+    }
+    50% {
+        transform: translateY(6px);
+    }
 }
 
 @media (max-width: 768px) {
@@ -537,6 +810,7 @@ body {
 
 .install-banner.show {
     bottom: 0;
+    animation: slideUp 0.4s ease-out forwards;
 }
 
 .install-content {
