@@ -1,4 +1,4 @@
-const CONFIG = {
+window.CONFIG = {
     SEARCH_DEBOUNCE_MS: 300,
     DEFAULT_CLASS: 11,
     DOWNLOAD_PATHS: {
@@ -7,7 +7,7 @@ const CONFIG = {
     }
 };
 
-const SUBJECT_CONFIG = {
+window.SUBJECT_CONFIG = {
     Physics: {
         icon: 'P',
         color: 'physics'
