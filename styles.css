@@ -1021,3 +1021,65 @@ body {
         flex: 1;
     }
 }
+
+
+/* Toast Notifications */
+.toast {
+    position: fixed;
+    bottom: -100px;
+    right: 24px;
+    padding: 14px 20px;
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    border-left: 4px solid var(--accent);
+    z-index: 10000;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 320px;
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toast.show {
+    bottom: 24px;
+}
+
+.toast-success {
+    border-left-color: var(--resources);
+    background: var(--resources-bg);
+}
+
+.toast-error {
+    border-left-color: var(--accent);
+    background: rgba(255, 71, 87, 0.1);
+}
+
+.toast-warning {
+    border-left-color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+}
+
+.toast-info {
+    border-left-color: var(--physics);
+    background: var(--physics-bg);
+}
+
+/* Error state */
+.empty.error {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.empty.error::before {
+    content: '⚠️';
+}
+
+/* Mobile toast adjustments */
+@media (max-width: 768px) {
+    .toast {
+        right: 16px;
+        left: 16px;
+        max-width: none;
+    }
+}
