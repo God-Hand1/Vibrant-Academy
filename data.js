@@ -198,6 +198,9 @@ STUDY_MATERIALS['prompts'] = {
             ],
             'Best Practices': [
                 { name: 'For Best Results', file: 'Vibrant Academy Modules/Prompts/For Best Results.txt' }
+            ],
+            'Image Processing': [
+                { name: 'Image Upscale', file: 'Vibrant Academy Modules/Prompts/Image Upscale.txt' }
             ]
         }
     }
