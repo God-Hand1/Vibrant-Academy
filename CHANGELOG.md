@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.2] - 2026-03-30
+
+### Fixed
+- Removed emoji from CSS (⚠️ → ⚠) for production-grade code standards
+- Removed empty .vscode/settings.json file
+
+### Changed
+- Service worker cache updated to v1.5.2
+
+### Audit
+- ✅ Zero console statements
+- ✅ Zero TODO/FIXME comments
+- ✅ Zero hardcoded secrets
+- ✅ Zero dead code
+- ✅ All diagnostics passing
+- ✅ Production-ready and approved for GitHub
+
 ## [1.5.1] - 2026-03-30
 
 ### Fixed
