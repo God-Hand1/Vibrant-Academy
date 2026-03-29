@@ -116,8 +116,12 @@ final-verification.*
 *_test.*
 *_debug.*
 *_temp.*
+serve.js
+server.js
+local-server.*
 
 # Documentation (Development Only)
 BUG_REPORT.md
 DEBUG_FIXES.md
 FIXES_APPLIED.md
+AUDIT_REPORT.md
