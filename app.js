@@ -150,6 +150,23 @@ class StudyMaterialsApp {
             e.preventDefault();
             return false;
         });
+        
+        // Disable long-press on mobile devices
+        let longPressTimer;
+        
+        document.addEventListener('touchstart', (e) => {
+            longPressTimer = setTimeout(() => {
+                e.preventDefault();
+            }, 500);
+        }, { passive: false });
+        
+        document.addEventListener('touchend', () => {
+            clearTimeout(longPressTimer);
+        });
+        
+        document.addEventListener('touchmove', () => {
+            clearTimeout(longPressTimer);
+        });
     }
     
     /**
