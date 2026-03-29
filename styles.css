@@ -2,10 +2,29 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 html {
     overscroll-behavior: none;
+}
+
+img {
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+}
+
+a {
+    -webkit-touch-callout: none;
+}
+
+button {
+    -webkit-touch-callout: none;
 }
 
 :root {
@@ -48,6 +67,8 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Performance optimizations - removed will-change to reduce memory consumption */
@@ -172,6 +193,8 @@ body {
     flex-shrink: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    -webkit-touch-callout: none;
+    pointer-events: none;
 }
 
 .brand-logo:hover {
