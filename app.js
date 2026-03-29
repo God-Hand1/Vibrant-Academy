@@ -75,6 +75,7 @@ class StudyMaterialsApp {
     init() {
         try {
             this.attachEventListeners();
+            this.disableRightClick();
             this.setupPWA();
             this.setupOnlineDetection();
             this.updateDownloadButton();
@@ -139,6 +140,16 @@ class StudyMaterialsApp {
             e.preventDefault();
             this.elements.searchInput?.focus();
         }
+    }
+    
+    /**
+     * Disable right-click context menu
+     */
+    disableRightClick() {
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
     }
     
     /**
