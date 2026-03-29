@@ -25,7 +25,7 @@ window.SUBJECT_CONFIG = {
         color: 'resources'
     },
     Prompts: {
-        icon: '💡',
+        icon: 'P',
         color: 'resources'
     }
 };
