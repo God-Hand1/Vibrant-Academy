@@ -1,6 +1,7 @@
+
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v2.0.0';
+const CACHE_NAME = 'vibrant-academy-v1.4.4';
 const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
 // Core assets to cache on install
@@ -19,20 +20,16 @@ const ASSETS_TO_CACHE = [
  * Install event - cache core assets
  */
 self.addEventListener('install', (event) => {
-    console.log('[SW] Installing...');
-    
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                console.log('[SW] Caching core assets');
                 return cache.addAll(ASSETS_TO_CACHE);
             })
             .then(() => {
-                console.log('[SW] Core assets cached');
                 return self.skipWaiting();
             })
-            .catch((error) => {
-                console.error('[SW] Cache failed:', error);
+            .catch(() => {
+                // Cache installation failed - will retry on next load
             })
     );
 });
@@ -41,22 +38,18 @@ self.addEventListener('install', (event) => {
  * Activate event - clean up old caches
  */
 self.addEventListener('activate', (event) => {
-    console.log('[SW] Activating...');
-    
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
                 return Promise.all(
                     cacheNames.map((cacheName) => {
                         if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
-                            console.log('[SW] Deleting old cache:', cacheName);
                             return caches.delete(cacheName);
                         }
                     })
                 );
             })
             .then(() => {
-                console.log('[SW] Activated');
                 return self.clients.claim();
             })
     );
@@ -113,15 +106,13 @@ self.addEventListener('fetch', (event) => {
                             .then((cache) => {
                                 cache.put(request, responseToCache);
                             })
-                            .catch((error) => {
-                                console.error('[SW] Cache put failed:', error);
+                            .catch(() => {
+                                // Cache put failed - continue without caching
                             });
                         
                         return response;
                     })
-                    .catch((error) => {
-                        console.error('[SW] Fetch failed:', error);
-                        
+                    .catch(() => {
                         // Return offline message
                         return new Response(
                             JSON.stringify({

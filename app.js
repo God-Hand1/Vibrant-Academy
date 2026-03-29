@@ -1,3 +1,4 @@
+
 'use strict';
 
 /**
@@ -247,7 +248,7 @@ class StudyMaterialsApp {
         
         try {
             await this.deferredPrompt.prompt();
-            const { outcome } = await this.deferredPrompt.userChoice;
+            await this.deferredPrompt.userChoice;
             
             this.deferredPrompt = null;
             this.hideInstallPrompt();
@@ -433,7 +434,7 @@ class StudyMaterialsApp {
      * @returns {boolean} True if mobile or tablet device
      */
     isMobileOrTabletDevice() {
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const userAgent = navigator.userAgent || '';
         
         // Check for mobile/tablet user agents
         const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;

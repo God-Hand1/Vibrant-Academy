@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.4.4] - 2026-03-29
+
+### Fixed
+- **CORS Configuration:** Fixed font preconnect and stylesheet CORS attributes
+  - Removed `crossorigin` from fonts.googleapis.com preconnect (line 21)
+  - Kept `crossorigin` on fonts.gstatic.com preconnect (correct)
+  - Removed redundant `crossorigin="anonymous"` from stylesheet link (line 24)
+  - Prevents potential CORS-related font loading issues
+  - Follows Google Fonts best practices
+
+### Changed
+- Updated service worker cache version to v1.4.4
+
+### Technical Details
+- Google Fonts requires crossorigin only on gstatic.com (font files), not googleapis.com (CSS)
+- Stylesheet links don't need crossorigin unless using credentials
+- Improves font loading reliability across browsers
+
 ## [1.4.3] - 2026-03-28
 
 ### Fixed

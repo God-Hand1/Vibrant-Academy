@@ -18,9 +18,9 @@
     <link rel="apple-touch-icon" href="./icon/logo.png">
     
     <link rel="stylesheet" href="./styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="nav">
@@ -84,27 +84,19 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
                     .then(registration => {
-                        console.log('✅ Service Worker registered:', registration.scope);
-                        
-                        // Check for updates
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
-                            console.log('🔄 Service Worker update found');
-                            
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    console.log('✨ New Service Worker available');
-                                    // Optionally notify user about update
+                                    // New version available
                                 }
                             });
                         });
                     })
-                    .catch(err => {
-                        console.error('❌ Service Worker registration failed:', err);
+                    .catch(() => {
+                        // Service Worker not supported or registration failed
                     });
             });
-        } else {
-            console.warn('⚠️ Service Workers not supported');
         }
     </script>
 </body>
