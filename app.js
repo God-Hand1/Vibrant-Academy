@@ -16,6 +16,7 @@ class StudyMaterialsApp {
         this.installBanner = null;
         this.isOnline = navigator.onLine;
         this.textContainer = null;
+        this.currentTextContent = '';
         
         // Constants
         this.CONSTANTS = {
@@ -118,6 +119,7 @@ class StudyMaterialsApp {
             this.elements.modalOverlay.addEventListener('click', () => this.closeModal());
         }
         
+        // Download/Copy button - handler will be set dynamically based on content type
         if (this.elements.downloadPdf) {
             this.elements.downloadPdf.addEventListener('click', () => this.downloadCurrentPdf());
         }
@@ -504,10 +506,75 @@ class StudyMaterialsApp {
             
             // Store reference for cleanup
             this.textContainer = textContainer;
+            this.currentTextContent = text;
+            
+            // Show copy button, hide download button for text files
+            this.toggleModalButtons(true);
             
         } catch (error) {
             this.showNotification('Failed to load text file', 'error');
             this.closeModal();
+        }
+    }
+    
+    /**
+     * Toggle modal buttons based on content type
+     * @param {boolean} isTextFile - Whether the current content is a text file
+     */
+    toggleModalButtons(isTextFile) {
+        if (!this.elements.downloadPdf) return;
+        
+        if (isTextFile) {
+            // Change download button to copy button
+            this.elements.downloadPdf.setAttribute('aria-label', 'Copy to clipboard');
+            this.elements.downloadPdf.setAttribute('title', 'Copy to clipboard');
+            this.elements.downloadPdf.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                </svg>
+            `;
+            this.elements.downloadPdf.onclick = () => this.copyTextToClipboard();
+        } else {
+            // Restore download button
+            this.elements.downloadPdf.setAttribute('aria-label', 'Download PDF');
+            this.elements.downloadPdf.setAttribute('title', 'Download PDF');
+            this.elements.downloadPdf.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+            `;
+            this.elements.downloadPdf.onclick = () => this.downloadCurrentPdf();
+        }
+    }
+    
+    /**
+     * Copy text content to clipboard
+     */
+    async copyTextToClipboard() {
+        if (!this.currentTextContent) {
+            this.showNotification('No text to copy', 'warning');
+            return;
+        }
+        
+        try {
+            await navigator.clipboard.writeText(this.currentTextContent);
+            this.showNotification('Copied to clipboard', 'success');
+        } catch (error) {
+            // Fallback for older browsers
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = this.currentTextContent;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                this.showNotification('Copied to clipboard', 'success');
+            } catch (fallbackError) {
+                this.showNotification('Failed to copy to clipboard', 'error');
+            }
         }
     }
     
@@ -641,7 +708,11 @@ class StudyMaterialsApp {
         }
         
         this.currentPdfUrl = '';
+        this.currentTextContent = '';
         document.body.style.overflow = '';
+        
+        // Restore download button to default state
+        this.toggleModalButtons(false);
         
         // Return focus to search
         setTimeout(() => {
