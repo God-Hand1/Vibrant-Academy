@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.1] - 2026-03-30
+
+### Fixed
+- **CRITICAL:** Removed all opacity animations causing "Layout was forced before page fully loaded" warning
+- Fixed font loading strategy - fonts now load asynchronously without blocking render
+- Removed initial opacity: 0 from nav, hero, main, footer, tabs, search, download button
+- Removed animate-in classes that were causing forced layout calculations
+- Page now renders immediately without waiting for animations
+
+### Changed
+- Fonts load asynchronously using media="print" trick with onload handler
+- Added preload hint for Inter font
+- Service worker cache updated to v1.5.1
+
+### Performance
+- Eliminated forced layout warnings
+- Faster initial page render
+- No more flash of invisible content (FOIC)
+- Improved Lighthouse performance score
+
 ## [1.5.0] - 2026-03-30
 
 ### Added
