@@ -88,7 +88,7 @@ class StudyMaterialsApp {
      * Attach all event listeners with null checks
      */
     attachEventListeners() {
-        // Class tabs
+        // Class tabs (desktop and mobile)
         const tabs = document.querySelectorAll('.tab');
         tabs.forEach(btn => {
             btn.addEventListener('click', (e) => this.handleClassChange(e));
