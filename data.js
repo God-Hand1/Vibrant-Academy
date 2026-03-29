@@ -189,3 +189,13 @@ STUDY_MATERIALS['others'] = {
         }
     }
 };
+
+STUDY_MATERIALS['prompts'] = {
+    'Prompts': {
+        categories: {
+            'Code Quality': [
+                { name: 'Audit', file: 'Vibrant Academy Modules/Prompts/Audit.txt' }
+            ]
+        }
+    }
+};
