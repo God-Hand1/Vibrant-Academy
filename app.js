@@ -15,6 +15,7 @@ class StudyMaterialsApp {
         this.currentPdfUrl = '';
         this.installBanner = null;
         this.isOnline = navigator.onLine;
+        this.textContainer = null;
         
         // Constants
         this.CONSTANTS = {
@@ -317,7 +318,7 @@ class StudyMaterialsApp {
         
         // Update current class
         const classValue = btn.dataset.class;
-        this.currentClass = classValue === 'others' ? 'others' : parseInt(classValue, 10);
+        this.currentClass = (classValue === 'others' || classValue === 'prompts') ? classValue : parseInt(classValue, 10);
         
         // Update UI
         this.updateDownloadButton();
@@ -369,7 +370,7 @@ class StudyMaterialsApp {
             return;
         }
         
-        if (this.currentClass === 'others') {
+        if (this.currentClass === 'others' || this.currentClass === 'prompts') {
             this.elements.downloadBtn.style.display = 'none';
         } else {
             this.elements.downloadBtn.style.display = 'flex';
@@ -445,15 +446,68 @@ class StudyMaterialsApp {
             this.elements.closeModal?.focus();
         }, 100);
         
-        // Detect mobile and tablet devices
-        const isMobileOrTablet = this.isMobileOrTabletDevice();
+        // Check if it's a text file
+        const isTextFile = decodedUrl.endsWith('.txt');
         
-        if (isMobileOrTablet) {
-            // Open in new tab on mobile and tablet devices
-            window.open(this.currentPdfUrl, '_blank', 'noopener,noreferrer');
-            this.closeModal();
+        if (isTextFile) {
+            // Load text file content
+            this.loadTextFile(decodedUrl);
         } else {
-            this.loadPdfInIframe(this.currentPdfUrl);
+            // Detect mobile and tablet devices
+            const isMobileOrTablet = this.isMobileOrTabletDevice();
+            
+            if (isMobileOrTablet) {
+                // Open in new tab on mobile and tablet devices
+                window.open(this.currentPdfUrl, '_blank', 'noopener,noreferrer');
+                this.closeModal();
+            } else {
+                this.loadPdfInIframe(this.currentPdfUrl);
+            }
+        }
+    }
+    
+    /**
+     * Load text file content and display in modal
+     * @param {string} url - Text file URL
+     */
+    async loadTextFile(url) {
+        if (!this.elements.pdfViewer) return;
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Failed to load text file');
+            }
+            
+            const text = await response.text();
+            
+            // Create a styled container for text content
+            const textContainer = document.createElement('div');
+            textContainer.style.cssText = `
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                padding: 32px;
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                font-size: 14px;
+                line-height: 1.8;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            `;
+            textContainer.textContent = text;
+            
+            // Hide iframe and show text container
+            this.elements.pdfViewer.style.display = 'none';
+            this.elements.pdfViewer.parentElement.appendChild(textContainer);
+            
+            // Store reference for cleanup
+            this.textContainer = textContainer;
+            
+        } catch (error) {
+            this.showNotification('Failed to load text file', 'error');
+            this.closeModal();
         }
     }
     
@@ -573,6 +627,13 @@ class StudyMaterialsApp {
         
         if (this.elements.pdfViewer) {
             this.elements.pdfViewer.src = '';
+            this.elements.pdfViewer.style.display = '';
+        }
+        
+        // Clean up text container if it exists
+        if (this.textContainer) {
+            this.textContainer.remove();
+            this.textContainer = null;
         }
         
         if (this.elements.pdfTitle) {
@@ -697,9 +758,12 @@ class StudyMaterialsApp {
             if (!pdf || !pdf.file || !pdf.name) return '';
             
             const encodedPath = pdf.file.split('/').map(part => encodeURIComponent(part)).join('/');
+            const isTextFile = pdf.file.endsWith('.txt');
+            const badge = isTextFile ? 'TXT' : 'PDF';
+            
             return `
             <a href="#" class="item" data-pdf="${this.sanitizeAttribute(encodedPath)}" role="button" aria-label="Open ${this.sanitizeText(pdf.name)}">
-                <div class="pdf-badge" aria-hidden="true">PDF</div>
+                <div class="pdf-badge" aria-hidden="true">${badge}</div>
                 <span class="item-name">${this.sanitizeText(pdf.name)}</span>
                 <svg class="arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
