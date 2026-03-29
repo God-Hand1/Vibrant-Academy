@@ -1107,7 +1107,7 @@ body {
 }
 
 .empty.error::before {
-    content: '⚠️';
+    content: '⚠';
 }
 
 /* Mobile toast adjustments */
