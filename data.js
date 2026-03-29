@@ -171,12 +171,19 @@ STUDY_MATERIALS['others'] = {
     'Resources': {
         categories: {
             'College Information': [
+                { name: 'BTech CSE', file: 'Vibrant Academy Modules/Others/BTech CSE.pdf' },
                 { name: 'College List', file: 'Vibrant Academy Modules/Others/College List.pdf' },
                 { name: 'College List (CUET)', file: 'Vibrant Academy Modules/Others/College List(CUET).pdf' },
                 { name: 'Engineering Entrance Exams Guide', file: 'Vibrant Academy Modules/Others/Engineering_Entrance_Exams_Guide.pdf' }
             ],
-            'Course Information': [
-                { name: 'BTech CSE', file: 'Vibrant Academy Modules/Others/BTech CSE.pdf' }
+            'CSE Resources': [
+                { name: 'Cloud Computing', file: 'Vibrant Academy Modules/Others/CSE/Cloud Computing.pdf' },
+                { name: 'DevOps Cloud', file: 'Vibrant Academy Modules/Others/CSE/DevOps Cloud.pdf' },
+                { name: 'DSA & Algorithms C++ Edition', file: 'Vibrant Academy Modules/Others/CSE/DSA & Algorithms C++ Edition.pdf' },
+                { name: 'DSA & Algorithms Multi-Language Edition', file: 'Vibrant Academy Modules/Others/CSE/DSA & Algorithms Multi-Language Edition.pdf' },
+                { name: 'Interview Preparation', file: 'Vibrant Academy Modules/Others/CSE/Interview Preparation.pdf' },
+                { name: 'OOP Multi-Language Edition', file: 'Vibrant Academy Modules/Others/CSE/OOP Multi-Language Edition.pdf' },
+                { name: 'System Design', file: 'Vibrant Academy Modules/Others/CSE/System Design.pdf' }
             ]
         }
     }
