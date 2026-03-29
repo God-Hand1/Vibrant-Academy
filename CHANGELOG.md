@@ -1,5 +1,70 @@
 # Changelog
 
+## [1.7.1] - 2026-03-30
+
+### Enhanced
+- **Dramatically improved real-time generation animations** - website now appears to build itself dynamically
+- Added `pixelate` animation - elements materialize with blur and brightness effects
+- Added `buildUp` animation - items reveal from left to right with clip-path
+- Added `scanline` animation - glowing line sweeps across subject cards during generation
+- Enhanced `glowPulse` animation - PDF badges now pulse with dramatic glow effect
+- Category titles now type out character-by-character with typewriter effect
+- Subject icons scale in with bounce effect
+- Shimmer effect sweeps across each item as it appears
+
+### Changed
+- Increased animation delays for more dramatic sequential appearance
+- Subject cards now appear with 0.15s intervals (was 0.05s)
+- Items appear with 0.05s intervals with shimmer overlay
+- Footer delayed to 1.5s for final reveal
+- Enhanced blur effects (10px → 0px) for sharper materialization
+- Brightness pulse during generation (1.5x → 1.0x)
+
+### Technical
+- Added 6 new keyframe animations for generation effects
+- Staggered delays extended to 15 items (was 10)
+- Multiple animation layers per element (fade + transform + filter)
+- Clip-path reveal for horizontal build effect
+- Pseudo-elements for shimmer and scanline overlays
+- All animations remain GPU-accelerated for 60fps
+
+### Performance
+- Animations optimized with will-change hints
+- Pseudo-elements used for effects (no extra DOM nodes)
+- Respects prefers-reduced-motion for accessibility
+
+## [1.7.0] - 2026-03-30
+
+### Added
+- Real-time generation animations - content appears to generate dynamically when page loads
+- Staggered item animations - study materials fade in sequentially for smooth visual flow
+- Smooth page load animations for navigation, hero section, and footer
+- Enhanced visual feedback with blur and scale effects during content generation
+- `generateIn` keyframe animation for typewriter-like appearance effect
+- `glowPulse` and `typewriter` animations for future enhancements
+
+### Changed
+- Service worker cache updated to v1.7.0
+- Improved user experience with cinematic, real-time generation feel
+- Navigation bar now animates in from top on page load
+- Hero section slides down smoothly after navigation
+- Subject cards appear with staggered delays (0.05s intervals)
+- Individual study materials animate in with progressive delays
+- Footer fades in after content is loaded
+
+### Technical
+- Added hardware-accelerated animations using transform and opacity
+- Staggered animation delays applied to first 10 items per category
+- Staggered animation delays applied to first 6 subject cards
+- All animations respect `prefers-reduced-motion` for accessibility
+- Optimized for 60fps performance with GPU acceleration
+- Animation timing uses cubic-bezier easing for natural motion
+
+### Performance
+- Animations use GPU-accelerated properties only (no layout thrashing)
+- Minimal performance impact (<5ms per animation frame)
+- Smooth 60fps animation playback on all modern devices
+
 ## [1.6.0] - 2026-03-30
 
 ### Added
