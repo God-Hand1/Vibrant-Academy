@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.6.0] - 2026-03-30
+
+### Added
+- New "Prompts" tab for accessing useful prompts and templates
+- Added "Audit" prompt in the Prompts section - comprehensive code audit checklist
+- Support for displaying text files (.txt) in the modal viewer
+- Text files now show "TXT" badge instead of "PDF" badge
+- Async text file loading with proper error handling
+- **Copy to clipboard button** for text files - automatically replaces download button
+- Clipboard API with fallback for older browsers
+
+### Changed
+- Updated tab navigation to include "Prompts" option
+- Modified modal viewer to handle both PDF and text file formats
+- Enhanced file type detection in generateCategoryHTML method
+- Updated download button logic to hide for both "Others" and "Prompts" tabs
+- Download button dynamically transforms to copy button for text files
+
+### Technical
+- Added loadTextFile() method for fetching and displaying text content
+- Added textContainer property for managing text display cleanup
+- Added currentTextContent property for storing text for clipboard operations
+- Added toggleModalButtons() method to switch between download/copy functionality
+- Added copyTextToClipboard() async method with fallback support
+- Updated closeModal() to properly clean up text containers and reset button state
+- Enhanced openModal() with file type detection logic
+
 ## [1.5.2] - 2026-03-30
 
 ### Fixed
