@@ -888,13 +888,11 @@ body {
     display: flex;
     flex-direction: column;
     opacity: 0;
-    transform: scale(0.98);
-    /* Optimize modal rendering performance */
-    will-change: opacity, transform;
+    transform: scale(0.95);
 }
 
 .modal.active .modal-content {
-    animation: scaleIn 0.25s ease-out 0.05s forwards;
+    animation: scaleIn 0.3s ease-out 0.1s forwards;
 }
 
 .modal-header {
@@ -991,17 +989,6 @@ body {
     height: 100%;
     flex: 1;
     border: none;
-    background: var(--bg);
-    /* Optimize iframe rendering */
-    contain: strict;
-    content-visibility: auto;
-}
-
-/* Loading spinner animation */
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
 }
 
 @media (max-width: 768px) {
