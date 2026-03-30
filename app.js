@@ -362,7 +362,7 @@ class StudyMaterialsApp {
         this.currentPdfUrl = decodedUrl;
         
         if (this.elements.pdfTitle) {
-            this.elements.pdfTitle.textContent = this.sanitizeText(title);
+            this.elements.pdfTitle.textContent = title;
         }
         
         this.elements.modal.classList.add('active');
@@ -397,7 +397,7 @@ class StudyMaterialsApp {
         }
         
         if (this.elements.textTitle) {
-            this.elements.textTitle.textContent = this.sanitizeText(title);
+            this.elements.textTitle.textContent = title;
         }
         
         this.elements.textModal.classList.add('active');
