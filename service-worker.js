@@ -1,102 +1,152 @@
+
 'use strict';
 
-const CACHE_VERSION = 'v1.8.0';
-const CACHE_NAME = `vibrant-academy-${CACHE_VERSION}`;
+const CACHE_NAME = 'vibrant-academy-v1.7.1';
+const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
-const CORE_ASSETS = [
-    '/',
-    '/index.html',
-    '/styles.css',
-    '/app.js',
-    '/config.js',
-    '/data.js',
-    '/manifest.json',
-    '/icon/logo.png',
-    '/icon/icon-192.png',
-    '/icon/icon-512.png'
+// Core assets to cache on install
+const ASSETS_TO_CACHE = [
+    './',
+    './index.html',
+    './styles.css',
+    './config.js',
+    './data.js',
+    './app.js',
+    './icon/logo.png',
+    './manifest.json'
 ];
 
-const MAX_CACHE_SIZE = 100;
-const MAX_CACHE_AGE = 7 * 24 * 60 * 60 * 1000;
-
+/**
+ * Install event - cache core assets
+ */
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => cache.addAll(CORE_ASSETS))
-            .then(() => self.skipWaiting())
+            .then((cache) => {
+                return cache.addAll(ASSETS_TO_CACHE);
+            })
+            .then(() => {
+                return self.skipWaiting();
+            })
+            .catch(() => {
+                // Cache installation failed - will retry on next load
+            })
     );
 });
 
+/**
+ * Activate event - clean up old caches
+ */
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
                 return Promise.all(
-                    cacheNames
-                        .filter((name) => name.startsWith('vibrant-academy-') && name !== CACHE_NAME)
-                        .map((name) => caches.delete(name))
+                    cacheNames.map((cacheName) => {
+                        if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
+                            return caches.delete(cacheName);
+                        }
+                    })
                 );
             })
-            .then(() => self.clients.claim())
+            .then(() => {
+                return self.clients.claim();
+            })
     );
 });
 
+/**
+ * Fetch event - cache-first strategy with network fallback
+ */
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     
-    if (!request.url.startsWith('http://') && !request.url.startsWith('https://')) {
-        return;
-    }
-    
+    // Skip non-GET requests
     if (request.method !== 'GET') {
         return;
     }
     
+    // Skip non-http(s) requests
+    if (!request.url.startsWith('http')) {
+        return;
+    }
+    
+    // Skip cross-origin requests (except fonts and external resources we want to cache)
+    const url = new URL(request.url);
+    const isOwnOrigin = url.origin === self.location.origin;
+    const isFontOrResource = request.url.includes('fonts.googleapis.com') || 
+                             request.url.includes('fonts.gstatic.com');
+    
+    if (!isOwnOrigin && !isFontOrResource) {
+        return;
+    }
+    
+    // Cache-first strategy
     event.respondWith(
-        fetch(request)
-            .then((response) => {
-                if (!response || response.status !== 200 || response.type === 'error') {
-                    return response;
+        caches.match(request)
+            .then((cachedResponse) => {
+                if (cachedResponse) {
+                    // Return cached version
+                    return cachedResponse;
                 }
                 
-                const responseToCache = response.clone();
-                
-                caches.open(CACHE_NAME).then((cache) => {
-                    cache.put(request, responseToCache);
-                    
-                    cache.keys().then((keys) => {
-                        if (keys.length > MAX_CACHE_SIZE) {
-                            cache.delete(keys[0]);
+                // Not in cache, fetch from network
+                return fetch(request)
+                    .then((response) => {
+                        // Check if valid response
+                        if (!response || response.status !== 200) {
+                            return response;
                         }
+                        
+                        // Clone the response
+                        const responseToCache = response.clone();
+                        
+                        // Cache the new response
+                        caches.open(RUNTIME_CACHE)
+                            .then((cache) => {
+                                cache.put(request, responseToCache);
+                            })
+                            .catch(() => {
+                                // Cache put failed - continue without caching
+                            });
+                        
+                        return response;
+                    })
+                    .catch(() => {
+                        // Return offline message
+                        return new Response(
+                            JSON.stringify({
+                                error: 'Offline',
+                                message: 'You are offline and this content is not cached'
+                            }),
+                            {
+                                status: 503,
+                                statusText: 'Service Unavailable',
+                                headers: new Headers({
+                                    'Content-Type': 'application/json'
+                                })
+                            }
+                        );
                     });
-                });
-                
-                return response;
-            })
-            .catch(() => {
-                return caches.match(request).then((cachedResponse) => {
-                    if (cachedResponse) {
-                        return cachedResponse;
-                    }
-                    
-                    if (request.destination === 'document') {
-                        return caches.match('./index.html');
-                    }
-                    
-                    return new Response('Offline - Resource not available', {
-                        status: 503,
-                        statusText: 'Service Unavailable',
-                        headers: new Headers({
-                            'Content-Type': 'text/plain'
-                        })
-                    });
-                });
             })
     );
 });
 
+/**
+ * Message event - handle messages from clients
+ */
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
+    }
+    
+    if (event.data && event.data.type === 'CLEAR_CACHE') {
+        event.waitUntil(
+            caches.keys().then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cacheName) => caches.delete(cacheName))
+                );
+            })
+        );
     }
 });
