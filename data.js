@@ -195,7 +195,8 @@ STUDY_MATERIALS['prompts'] = {
     'Prompts': {
         categories: {
             'Code Quality': [
-                { name: 'Audit', file: 'Vibrant Academy Modules/Prompts/Audit.txt' }
+                { name: 'Audit', file: 'Vibrant Academy Modules/Prompts/Audit.txt' },
+                { name: 'Bug Fix', file: 'Vibrant Academy Modules/Prompts/Bug Fix.txt' }
             ],
             'Best Practices': [
                 { name: 'For Best Results', file: 'Vibrant Academy Modules/Prompts/For Best Results.txt' }
