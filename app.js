@@ -354,7 +354,8 @@ class StudyMaterialsApp {
         let decodedUrl = url;
         try {
             decodedUrl = decodeURIComponent(url);
-        } catch (e) {
+        } catch (decodeError) {
+            // URL already decoded or malformed - use as-is
             decodedUrl = url;
         }
         
@@ -390,7 +391,8 @@ class StudyMaterialsApp {
         let decodedUrl = url;
         try {
             decodedUrl = decodeURIComponent(url);
-        } catch (e) {
+        } catch (decodeError) {
+            // URL already decoded or malformed - use as-is
             decodedUrl = url;
         }
         
@@ -453,8 +455,8 @@ class StudyMaterialsApp {
                 if (!this.elements.pdfViewer.contentDocument && !this.elements.pdfViewer.contentWindow) {
                     errorHandler();
                 }
-            } catch (e) {
-                // Cross-origin restriction - PDF is loading normally
+            } catch (crossOriginError) {
+                // Cross-origin restriction expected - PDF loading normally in iframe
             }
         }, this.CONSTANTS.MODAL_LOAD_TIMEOUT);
         
@@ -559,22 +561,30 @@ class StudyMaterialsApp {
                     this.elements.copyText?.classList.remove('copied');
                 }, 2000);
             }
-        } catch (error) {
-            // Fallback for legacy browsers that don't support Clipboard API
-            // Using deprecated document.execCommand as last resort for IE11 and older browsers
+        } catch (clipboardError) {
+            // Fallback: Create temporary textarea for legacy browser support
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '0';
+            textArea.setAttribute('readonly', '');
+            document.body.appendChild(textArea);
+            
             try {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-999999px';
-                document.body.appendChild(textArea);
                 textArea.select();
-                // Note: execCommand('copy') is deprecated but necessary for legacy browser support
-                document.execCommand('copy');
+                textArea.setSelectionRange(0, text.length);
+                const successful = document.execCommand('copy');
                 document.body.removeChild(textArea);
-                this.showNotification('Copied to clipboard', 'success');
+                
+                if (successful) {
+                    this.showNotification('Copied to clipboard', 'success');
+                } else {
+                    this.showNotification('Failed to copy', 'error');
+                }
             } catch (fallbackError) {
-                this.showNotification('Failed to copy', 'error');
+                document.body.removeChild(textArea);
+                this.showNotification('Copy not supported', 'error');
             }
         }
     }
