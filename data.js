@@ -200,7 +200,8 @@ STUDY_MATERIALS['prompts'] = {
                 { name: 'Bug Fix & Audit', file: 'Vibrant Academy Modules/Prompts/Bug Fix & Audit.txt' }
             ],
             'Best Practices': [
-                { name: 'For Best Results', file: 'Vibrant Academy Modules/Prompts/For Best Results.txt' }
+                { name: 'For Best Results', file: 'Vibrant Academy Modules/Prompts/For Best Results.txt' },
+                { name: 'For Building Production Grade Projects', file: 'Vibrant Academy Modules/Prompts/For Building Production Grade Projects.txt' }
             ],
             'Image Processing': [
                 { name: 'Image Upscale', file: 'Vibrant Academy Modules/Prompts/Image Upscale.txt' }
