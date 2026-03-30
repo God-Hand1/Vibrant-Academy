@@ -180,6 +180,7 @@ STUDY_MATERIALS['others'] = {
                 { name: 'Cloud Computing', file: 'Vibrant Academy Modules/Others/CSE/Cloud Computing.pdf' },
                 { name: 'DevOps Cloud', file: 'Vibrant Academy Modules/Others/CSE/DevOps Cloud.pdf' },
                 { name: 'Dorking Encyclopedia', file: 'Vibrant Academy Modules/Others/CSE/Dorking Encyclopedia.pdf' },
+                { name: 'Dorking Encyclopedia 2nd Edition', file: 'Vibrant Academy Modules/Others/CSE/Dorking Encyclopedia 2nd Edition.pdf' },
                 { name: 'DSA & Algorithms C++ Edition', file: 'Vibrant Academy Modules/Others/CSE/DSA & Algorithms C++ Edition.pdf' },
                 { name: 'DSA & Algorithms Multi-Language Edition', file: 'Vibrant Academy Modules/Others/CSE/DSA & Algorithms Multi-Language Edition.pdf' },
                 { name: 'Interview Preparation', file: 'Vibrant Academy Modules/Others/CSE/Interview Preparation.pdf' },
