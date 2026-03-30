@@ -612,7 +612,7 @@ class StudyMaterialsApp {
     }
     
     /**
-     * Load PDF in iframe with error handling
+     * Load PDF in iframe with optimized performance
      * Note: Cookie/storage warnings in console are expected when loading PDFs in iframes
      * due to third-party context restrictions. This is normal browser behavior.
      * @param {string} url - PDF URL
@@ -620,37 +620,93 @@ class StudyMaterialsApp {
     loadPdfInIframe(url) {
         if (!this.elements.pdfViewer) return;
         
-        this.elements.pdfViewer.src = url;
+        // Show loading indicator
+        this.showPdfLoadingIndicator();
         
-        let timeoutCleared = false;
+        // Optimize iframe attributes for performance
+        this.elements.pdfViewer.setAttribute('loading', 'lazy');
+        this.elements.pdfViewer.setAttribute('importance', 'high');
         
-        const errorHandler = () => {
-            if (timeoutCleared) return;
-            window.open(url, '_blank', 'noopener,noreferrer');
-            this.closeModal();
-        };
-        
-        const loadTimeout = setTimeout(() => {
-            try {
-                // Check if iframe loaded
-                if (!this.elements.pdfViewer.contentDocument && !this.elements.pdfViewer.contentWindow) {
-                    errorHandler();
+        // Use requestIdleCallback for non-critical iframe setup
+        const loadIframe = () => {
+            this.elements.pdfViewer.src = url;
+            
+            let timeoutCleared = false;
+            
+            const errorHandler = () => {
+                if (timeoutCleared) return;
+                this.hidePdfLoadingIndicator();
+                window.open(url, '_blank', 'noopener,noreferrer');
+                this.closeModal();
+            };
+            
+            const loadTimeout = setTimeout(() => {
+                try {
+                    // Check if iframe loaded
+                    if (!this.elements.pdfViewer.contentDocument && !this.elements.pdfViewer.contentWindow) {
+                        errorHandler();
+                    }
+                } catch (e) {
+                    // Cross-origin restriction - PDF is loading normally
+                    this.hidePdfLoadingIndicator();
                 }
-            } catch (e) {
-                // Cross-origin restriction - PDF is loading normally
-            }
-        }, this.CONSTANTS.MODAL_LOAD_TIMEOUT);
-        
-        this.elements.pdfViewer.onload = () => {
-            timeoutCleared = true;
-            clearTimeout(loadTimeout);
+            }, this.CONSTANTS.MODAL_LOAD_TIMEOUT);
+            
+            this.elements.pdfViewer.onload = () => {
+                timeoutCleared = true;
+                clearTimeout(loadTimeout);
+                this.hidePdfLoadingIndicator();
+            };
+            
+            this.elements.pdfViewer.onerror = () => {
+                timeoutCleared = true;
+                clearTimeout(loadTimeout);
+                errorHandler();
+            };
         };
         
-        this.elements.pdfViewer.onerror = () => {
-            timeoutCleared = true;
-            clearTimeout(loadTimeout);
-            errorHandler();
-        };
+        // Use requestIdleCallback if available, otherwise setTimeout
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadIframe, { timeout: 100 });
+        } else {
+            setTimeout(loadIframe, 0);
+        }
+    }
+    
+    /**
+     * Show PDF loading indicator
+     */
+    showPdfLoadingIndicator() {
+        if (!this.elements.pdfViewer) return;
+        
+        const loader = document.createElement('div');
+        loader.id = 'pdf-loader';
+        loader.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: var(--text-secondary);
+            z-index: 10;
+        `;
+        loader.innerHTML = `
+            <div style="width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px;"></div>
+            <div style="font-size: 14px;">Loading PDF...</div>
+        `;
+        
+        this.elements.pdfViewer.parentElement.style.position = 'relative';
+        this.elements.pdfViewer.parentElement.appendChild(loader);
+    }
+    
+    /**
+     * Hide PDF loading indicator
+     */
+    hidePdfLoadingIndicator() {
+        const loader = document.getElementById('pdf-loader');
+        if (loader) {
+            loader.remove();
+        }
     }
     
     /**
@@ -692,9 +748,17 @@ class StudyMaterialsApp {
         
         this.elements.modal.classList.remove('active');
         
+        // Clean up loading indicator
+        this.hidePdfLoadingIndicator();
+        
         if (this.elements.pdfViewer) {
-            this.elements.pdfViewer.src = '';
+            // Clear iframe src to free memory
+            this.elements.pdfViewer.src = 'about:blank';
             this.elements.pdfViewer.style.display = '';
+            
+            // Remove iframe attributes
+            this.elements.pdfViewer.removeAttribute('loading');
+            this.elements.pdfViewer.removeAttribute('importance');
         }
         
         // Clean up text container if it exists
