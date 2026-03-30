@@ -20,7 +20,6 @@
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
     
     <!-- Load stylesheet first -->
     <link rel="stylesheet" href="./styles.css">
@@ -127,17 +126,17 @@
                     .then(registration => {
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New version available - could notify user to refresh
-                                    // Silent update: new version will be used on next page load
-                                }
-                            });
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // New version available - silent update on next page load
+                                    }
+                                });
+                            }
                         });
                     })
-                    .catch((error) => {
-                        // Service Worker registration failed - app continues without offline support
-                        // Acceptable graceful degradation for unsupported browsers
+                    .catch(() => {
+                        // Service Worker registration failed - graceful degradation
                     });
             });
         }
