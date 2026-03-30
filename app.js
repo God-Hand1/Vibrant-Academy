@@ -562,7 +562,7 @@ class StudyMaterialsApp {
                 }, 2000);
             }
         } catch (clipboardError) {
-            // Fallback: Create temporary textarea for legacy browser support
+            // Fallback for browsers without Clipboard API support
             const textArea = document.createElement('textarea');
             textArea.value = text;
             textArea.style.position = 'fixed';
