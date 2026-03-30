@@ -1,20 +1,29 @@
-# Enable HTTPS redirect (if not on GitHub Pages)
+# Enable HTTPS redirect (uncomment for production)
 # RewriteEngine On
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# MIME types for PWA
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest .json
+    AddType image/png .png
+    AddType text/javascript .js
+</IfModule>
+
 # Cache control for PWA
 <IfModule mod_headers.c>
-    # Service Worker - no cache
+    # Service Worker - no cache, allow scope
     <FilesMatch "service-worker\.js$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
         Header set Pragma "no-cache"
         Header set Expires 0
+        Header set Service-Worker-Allowed "/"
     </FilesMatch>
     
-    # Manifest - short cache
+    # Manifest - no cache for updates
     <FilesMatch "manifest\.json$">
-        Header set Cache-Control "max-age=3600"
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Content-Type "application/manifest+json"
     </FilesMatch>
     
     # Static assets - long cache
