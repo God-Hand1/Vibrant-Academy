@@ -13,9 +13,9 @@
     <meta name="apple-mobile-web-app-title" content="Vibrant Academy">
     <title>Vibrant Academy | Study Materials</title>
     
-    <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/png" href="./icon/logo.png">
-    <link rel="apple-touch-icon" href="./icon/logo.png">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/icon/icon-192.png">
+    <link rel="apple-touch-icon" href="/icon/icon-192.png">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -122,21 +122,22 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
+                navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
                     .then(registration => {
+                        console.log('ServiceWorker registered:', registration.scope);
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             if (newWorker) {
                                 newWorker.addEventListener('statechange', () => {
                                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // New version available - silent update on next page load
+                                        console.log('New version available');
                                     }
                                 });
                             }
                         });
                     })
-                    .catch(() => {
-                        // Service Worker registration failed - graceful degradation
+                    .catch(error => {
+                        console.warn('ServiceWorker registration failed:', error);
                     });
             });
         }
