@@ -15,12 +15,6 @@
 - Enhanced memory management with proper iframe cleanup
 - Added will-change hint to modal-content for smoother animations
 
-### Removed
-- AUDIT_REPORT.md (development artifact)
-- FINAL_AUDIT_REPORT.md (development artifact)
-- PRODUCTION_AUDIT_FINAL.md (development artifact)
-- .vscode/settings.json (empty IDE file)
-
 ### Fixed
 - **CRITICAL:** PDF iframe lag on desktop devices - now loads smoothly
 - Memory leaks in modal component - iframe properly cleaned up
