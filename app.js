@@ -7,7 +7,6 @@
  */
 class StudyMaterialsApp {
     constructor() {
-        // Configuration
         this.currentClass = window.CONFIG?.DEFAULT_CLASS || 11;
         this.searchTerm = '';
         this.searchTimeout = null;
@@ -15,20 +14,15 @@ class StudyMaterialsApp {
         this.currentPdfUrl = '';
         this.installBanner = null;
         this.isOnline = navigator.onLine;
-        this.textContainer = null;
-        this.currentTextContent = '';
         
-        // Constants
         this.CONSTANTS = {
             MODAL_LOAD_TIMEOUT: 3000,
             INSTALL_BANNER_DELAY: 100,
             SEARCH_DEBOUNCE: window.CONFIG?.SEARCH_DEBOUNCE_MS || 300
         };
         
-        // Cache DOM elements
         this.elements = this.cacheElements();
         
-        // Validate required elements
         if (!this.validateElements()) {
             this.showError('Failed to initialize: Required elements not found');
             return;
@@ -37,10 +31,6 @@ class StudyMaterialsApp {
         this.init();
     }
     
-    /**
-     * Cache all DOM elements
-     * @returns {Object} Cached elements
-     */
     cacheElements() {
         return {
             content: document.getElementById('content'),
@@ -52,28 +42,20 @@ class StudyMaterialsApp {
             pdfTitle: document.getElementById('pdfTitle'),
             closeModal: document.getElementById('closeModal'),
             modalOverlay: document.querySelector('.modal-overlay'),
-            downloadPdf: document.getElementById('downloadPdf')
+            downloadPdf: document.getElementById('downloadPdf'),
+            textModal: document.getElementById('textModal'),
+            textViewer: document.getElementById('textViewer'),
+            textTitle: document.getElementById('textTitle'),
+            closeTextModal: document.getElementById('closeTextModal'),
+            copyText: document.getElementById('copyText')
         };
     }
     
-    /**
-     * Validate that required elements exist
-     * @returns {boolean} True if all required elements exist
-     */
     validateElements() {
         const required = ['content', 'searchInput', 'downloadBtn', 'modal', 'pdfViewer', 'closeModal'];
-        const missing = required.filter(key => !this.elements[key]);
-        
-        if (missing.length > 0) {
-            return false;
-        }
-        
-        return true;
+        return required.every(key => this.elements[key]);
     }
     
-    /**
-     * Initialize the application
-     */
     init() {
         try {
             this.attachEventListeners();
@@ -87,30 +69,21 @@ class StudyMaterialsApp {
         }
     }
     
-    /**
-     * Attach all event listeners with null checks
-     */
     attachEventListeners() {
-        // Class tabs (desktop and mobile)
-        const tabs = document.querySelectorAll('.tab');
-        tabs.forEach(btn => {
+        document.querySelectorAll('.tab').forEach(btn => {
             btn.addEventListener('click', (e) => this.handleClassChange(e));
         });
         
-        // Search input
         if (this.elements.searchInput) {
             this.elements.searchInput.addEventListener('input', (e) => this.handleSearch(e));
         }
         
-        // Download button
         if (this.elements.downloadBtn) {
             this.elements.downloadBtn.addEventListener('click', () => this.handleDownload());
         }
         
-        // PDF click delegation
-        document.addEventListener('click', (e) => this.handlePdfClick(e));
+        document.addEventListener('click', (e) => this.handleItemClick(e));
         
-        // Modal controls
         if (this.elements.closeModal) {
             this.elements.closeModal.addEventListener('click', () => this.closeModal());
         }
@@ -119,42 +92,48 @@ class StudyMaterialsApp {
             this.elements.modalOverlay.addEventListener('click', () => this.closeModal());
         }
         
-        // Download/Copy button - handler will be set dynamically based on content type
         if (this.elements.downloadPdf) {
             this.elements.downloadPdf.addEventListener('click', () => this.downloadCurrentPdf());
         }
         
-        // Keyboard shortcuts
+        if (this.elements.closeTextModal) {
+            this.elements.closeTextModal.addEventListener('click', () => this.closeTextModal());
+        }
+        
+        const textModalOverlay = this.elements.textModal?.querySelector('.modal-overlay');
+        if (textModalOverlay) {
+            textModalOverlay.addEventListener('click', () => this.closeTextModal());
+        }
+        
+        if (this.elements.copyText) {
+            this.elements.copyText.addEventListener('click', () => this.copyTextToClipboard());
+        }
+        
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
     }
     
-    /**
-     * Handle keyboard events
-     * @param {KeyboardEvent} e - Keyboard event
-     */
     handleKeyboard(e) {
-        // Escape key closes modal
-        if (e.key === 'Escape' && this.elements.modal?.classList.contains('active')) {
-            this.closeModal();
+        if (e.key === 'Escape') {
+            if (this.elements.modal?.classList.contains('active')) {
+                this.closeModal();
+            }
+            if (this.elements.textModal?.classList.contains('active')) {
+                this.closeTextModal();
+            }
         }
         
-        // Ctrl/Cmd + K focuses search
         if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
             e.preventDefault();
             this.elements.searchInput?.focus();
         }
     }
     
-    /**
-     * Disable right-click context menu
-     */
     disableRightClick() {
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             return false;
         });
         
-        // Disable long-press on mobile devices
         let longPressTimer;
         
         document.addEventListener('touchstart', (e) => {
@@ -172,9 +151,6 @@ class StudyMaterialsApp {
         });
     }
     
-    /**
-     * Setup online/offline detection
-     */
     setupOnlineDetection() {
         window.addEventListener('online', () => {
             this.isOnline = true;
@@ -187,9 +163,6 @@ class StudyMaterialsApp {
         });
     }
     
-    /**
-     * Setup PWA features
-     */
     setupPWA() {
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -204,24 +177,14 @@ class StudyMaterialsApp {
         });
     }
     
-    /**
-     * Show PWA install prompt
-     */
     showInstallPrompt() {
-        // Check if already dismissed
-        if (localStorage.getItem('install-dismissed') === 'true') {
-            return;
-        }
-        
-        // Don't show if already showing
-        if (this.installBanner) {
+        if (localStorage.getItem('install-dismissed') === 'true' || this.installBanner) {
             return;
         }
         
         this.installBanner = document.createElement('div');
         this.installBanner.className = 'install-banner';
         
-        // Create elements safely
         const content = document.createElement('div');
         content.className = 'install-content';
         
@@ -250,7 +213,6 @@ class StudyMaterialsApp {
         dismissBtn.textContent = '×';
         dismissBtn.setAttribute('aria-label', 'Dismiss install prompt');
         
-        // Add event listeners
         installBtn.addEventListener('click', () => this.handleInstall());
         dismissBtn.addEventListener('click', () => this.handleDismissInstall());
         
@@ -263,24 +225,17 @@ class StudyMaterialsApp {
         this.installBanner.appendChild(content);
         document.body.appendChild(this.installBanner);
         
-        // Show with animation
         setTimeout(() => {
             this.installBanner?.classList.add('show');
         }, this.CONSTANTS.INSTALL_BANNER_DELAY);
     }
     
-    /**
-     * Handle install button click
-     */
     async handleInstall() {
-        if (!this.deferredPrompt) {
-            return;
-        }
+        if (!this.deferredPrompt) return;
         
         try {
             await this.deferredPrompt.prompt();
             await this.deferredPrompt.userChoice;
-            
             this.deferredPrompt = null;
             this.hideInstallPrompt();
         } catch (error) {
@@ -288,17 +243,11 @@ class StudyMaterialsApp {
         }
     }
     
-    /**
-     * Handle dismiss install button
-     */
     handleDismissInstall() {
         localStorage.setItem('install-dismissed', 'true');
         this.hideInstallPrompt();
     }
     
-    /**
-     * Hide install prompt
-     */
     hideInstallPrompt() {
         if (this.installBanner) {
             this.installBanner.remove();
@@ -306,30 +255,20 @@ class StudyMaterialsApp {
         }
     }
     
-    /**
-     * Handle class tab change
-     * @param {Event} e - Click event
-     */
     handleClassChange(e) {
         const btn = e.target.closest('.tab');
         if (!btn) return;
         
-        // Update active state
         document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         
-        // Update current class
         const classValue = btn.dataset.class;
         this.currentClass = (classValue === 'others' || classValue === 'prompts') ? classValue : parseInt(classValue, 10);
         
-        // Update UI
         this.updateDownloadButton();
         this.render();
     }
     
-    /**
-     * Handle download button click
-     */
     handleDownload() {
         if (!window.CONFIG?.DOWNLOAD_PATHS) {
             this.showNotification('Download configuration not found', 'error');
@@ -364,13 +303,8 @@ class StudyMaterialsApp {
         }
     }
     
-    /**
-     * Update download button visibility and text
-     */
     updateDownloadButton() {
-        if (!this.elements.downloadBtn || !this.elements.downloadText) {
-            return;
-        }
+        if (!this.elements.downloadBtn || !this.elements.downloadText) return;
         
         if (this.currentClass === 'others' || this.currentClass === 'prompts') {
             this.elements.downloadBtn.style.display = 'none';
@@ -381,10 +315,6 @@ class StudyMaterialsApp {
         }
     }
     
-    /**
-     * Handle search input with debouncing
-     * @param {Event} e - Input event
-     */
     handleSearch(e) {
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
@@ -393,40 +323,34 @@ class StudyMaterialsApp {
         }, this.CONSTANTS.SEARCH_DEBOUNCE);
     }
     
-    /**
-     * Handle PDF item click
-     * @param {Event} e - Click event
-     */
-    handlePdfClick(e) {
+    handleItemClick(e) {
         const item = e.target.closest('.item');
         if (!item) return;
         
         e.preventDefault();
         
-        const pdfUrl = item.dataset.pdf;
-        const pdfNameElement = item.querySelector('.item-name');
-        const pdfName = pdfNameElement ? pdfNameElement.textContent : 'Document';
+        const fileUrl = item.dataset.pdf;
+        const fileNameElement = item.querySelector('.item-name');
+        const fileName = fileNameElement ? fileNameElement.textContent : 'Document';
         
-        if (!pdfUrl) {
-            this.showNotification('PDF URL not found', 'error');
+        if (!fileUrl) {
+            this.showNotification('File URL not found', 'error');
             return;
         }
         
-        this.openModal(pdfUrl, pdfName);
+        if (fileUrl.endsWith('.txt')) {
+            this.openTextModal(fileUrl, fileName);
+        } else {
+            this.openPdfModal(fileUrl, fileName);
+        }
     }
     
-    /**
-     * Open PDF modal viewer
-     * @param {string} url - PDF URL
-     * @param {string} title - PDF title
-     */
-    openModal(url, title) {
+    openPdfModal(url, title) {
         if (!this.elements.modal || !this.elements.pdfViewer) {
             this.showNotification('Modal not available', 'error');
             return;
         }
         
-        // Decode URL safely
         let decodedUrl = url;
         try {
             decodedUrl = decodeURIComponent(url);
@@ -443,167 +367,67 @@ class StudyMaterialsApp {
         this.elements.modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
-        // Focus close button for accessibility
         setTimeout(() => {
             this.elements.closeModal?.focus();
         }, 100);
         
-        // Check if it's a text file
-        const isTextFile = decodedUrl.endsWith('.txt');
+        const isMobileOrTablet = this.isMobileOrTabletDevice();
         
-        if (isTextFile) {
-            // Load text file content
-            this.loadTextFile(decodedUrl);
-        } else {
-            // Detect mobile and tablet devices
-            const isMobileOrTablet = this.isMobileOrTabletDevice();
-            
-            if (isMobileOrTablet) {
-                // Open in new tab on mobile and tablet devices
-                window.open(this.currentPdfUrl, '_blank', 'noopener,noreferrer');
-                this.closeModal();
-            } else {
-                this.loadPdfInIframe(this.currentPdfUrl);
-            }
-        }
-    }
-    
-    /**
-     * Load text file content and display in modal
-     * @param {string} url - Text file URL
-     */
-    async loadTextFile(url) {
-        if (!this.elements.pdfViewer) return;
-        
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to load text file');
-            }
-            
-            const text = await response.text();
-            
-            // Create a styled container for text content
-            const textContainer = document.createElement('div');
-            textContainer.style.cssText = `
-                width: 100%;
-                height: 100%;
-                overflow: auto;
-                padding: 32px;
-                background: var(--bg);
-                color: var(--text);
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                font-size: 14px;
-                line-height: 1.8;
-                white-space: pre-wrap;
-                word-wrap: break-word;
-            `;
-            textContainer.textContent = text;
-            
-            // Hide iframe and show text container
-            this.elements.pdfViewer.style.display = 'none';
-            this.elements.pdfViewer.parentElement.appendChild(textContainer);
-            
-            // Store reference for cleanup
-            this.textContainer = textContainer;
-            this.currentTextContent = text;
-            
-            // Show copy button, hide download button for text files
-            this.toggleModalButtons(true);
-            
-        } catch (error) {
-            this.showNotification('Failed to load text file', 'error');
+        if (isMobileOrTablet) {
+            window.open(this.currentPdfUrl, '_blank', 'noopener,noreferrer');
             this.closeModal();
-        }
-    }
-    
-    /**
-     * Toggle modal buttons based on content type
-     * @param {boolean} isTextFile - Whether the current content is a text file
-     */
-    toggleModalButtons(isTextFile) {
-        if (!this.elements.downloadPdf) return;
-        
-        if (isTextFile) {
-            // Change download button to copy button
-            this.elements.downloadPdf.setAttribute('aria-label', 'Copy to clipboard');
-            this.elements.downloadPdf.setAttribute('title', 'Copy to clipboard');
-            this.elements.downloadPdf.innerHTML = `
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                </svg>
-            `;
-            this.elements.downloadPdf.onclick = () => this.copyTextToClipboard();
         } else {
-            // Restore download button
-            this.elements.downloadPdf.setAttribute('aria-label', 'Download PDF');
-            this.elements.downloadPdf.setAttribute('title', 'Download PDF');
-            this.elements.downloadPdf.innerHTML = `
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-            `;
-            this.elements.downloadPdf.onclick = () => this.downloadCurrentPdf();
+            this.loadPdfInIframe(this.currentPdfUrl);
         }
     }
     
-    /**
-     * Copy text content to clipboard
-     */
-    async copyTextToClipboard() {
-        if (!this.currentTextContent) {
-            this.showNotification('No text to copy', 'warning');
+    async openTextModal(url, title) {
+        if (!this.elements.textModal || !this.elements.textViewer) {
+            this.showNotification('Text viewer not available', 'error');
             return;
         }
         
+        let decodedUrl = url;
         try {
-            await navigator.clipboard.writeText(this.currentTextContent);
-            this.showNotification('Copied to clipboard', 'success');
+            decodedUrl = decodeURIComponent(url);
+        } catch (e) {
+            decodedUrl = url;
+        }
+        
+        if (this.elements.textTitle) {
+            this.elements.textTitle.textContent = this.sanitizeText(title);
+        }
+        
+        this.elements.textModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        try {
+            const response = await fetch(decodedUrl);
+            if (!response.ok) throw new Error('Failed to load text');
+            const text = await response.text();
+            this.elements.textViewer.textContent = text;
+            
+            setTimeout(() => {
+                this.elements.closeTextModal?.focus();
+            }, 100);
         } catch (error) {
-            // Fallback for older browsers
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = this.currentTextContent;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-999999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                this.showNotification('Copied to clipboard', 'success');
-            } catch (fallbackError) {
-                this.showNotification('Failed to copy to clipboard', 'error');
-            }
+            this.showNotification('Failed to load text file', 'error');
+            this.closeTextModal();
         }
     }
     
-    /**
-     * Detect if device is mobile or tablet (not desktop)
-     * @returns {boolean} True if mobile or tablet device
-     */
     isMobileOrTabletDevice() {
         const userAgent = navigator.userAgent || '';
-        
-        // Check for mobile/tablet user agents
         const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-        if (mobileRegex.test(userAgent)) {
-            return true;
-        }
         
-        // Check for tablet-specific indicators
-        // Modern tablets often have "Mobile" in user agent but with larger screens
+        if (mobileRegex.test(userAgent)) return true;
+        
         const isAndroidTablet = /Android/i.test(userAgent) && !/Mobile/i.test(userAgent);
-        if (isAndroidTablet) {
-            return true;
-        }
+        if (isAndroidTablet) return true;
         
-        // Check screen size as additional indicator
-        // Tablets typically have width between 768px and 1024px
         const screenWidth = window.innerWidth || document.documentElement.clientWidth;
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         
-        // If touch device with tablet-like screen size, treat as tablet
         if (isTouchDevice && screenWidth >= 600 && screenWidth <= 1024) {
             return true;
         }
@@ -611,12 +435,6 @@ class StudyMaterialsApp {
         return false;
     }
     
-    /**
-     * Load PDF in iframe with error handling
-     * Note: Cookie/storage warnings in console are expected when loading PDFs in iframes
-     * due to third-party context restrictions. This is normal browser behavior.
-     * @param {string} url - PDF URL
-     */
     loadPdfInIframe(url) {
         if (!this.elements.pdfViewer) return;
         
@@ -632,7 +450,6 @@ class StudyMaterialsApp {
         
         const loadTimeout = setTimeout(() => {
             try {
-                // Check if iframe loaded
                 if (!this.elements.pdfViewer.contentDocument && !this.elements.pdfViewer.contentWindow) {
                     errorHandler();
                 }
@@ -653,9 +470,6 @@ class StudyMaterialsApp {
         };
     }
     
-    /**
-     * Download current PDF
-     */
     downloadCurrentPdf() {
         if (!this.currentPdfUrl) {
             this.showNotification('No PDF selected', 'warning');
@@ -684,9 +498,6 @@ class StudyMaterialsApp {
         }
     }
     
-    /**
-     * Close PDF modal
-     */
     closeModal() {
         if (!this.elements.modal) return;
         
@@ -694,13 +505,6 @@ class StudyMaterialsApp {
         
         if (this.elements.pdfViewer) {
             this.elements.pdfViewer.src = '';
-            this.elements.pdfViewer.style.display = '';
-        }
-        
-        // Clean up text container if it exists
-        if (this.textContainer) {
-            this.textContainer.remove();
-            this.textContainer = null;
         }
         
         if (this.elements.pdfTitle) {
@@ -708,21 +512,73 @@ class StudyMaterialsApp {
         }
         
         this.currentPdfUrl = '';
-        this.currentTextContent = '';
         document.body.style.overflow = '';
         
-        // Restore download button to default state
-        this.toggleModalButtons(false);
-        
-        // Return focus to search
         setTimeout(() => {
             this.elements.searchInput?.focus();
         }, 100);
     }
     
-    /**
-     * Render materials grid
-     */
+    closeTextModal() {
+        if (!this.elements.textModal) return;
+        
+        this.elements.textModal.classList.remove('active');
+        
+        if (this.elements.textViewer) {
+            this.elements.textViewer.textContent = '';
+        }
+        
+        if (this.elements.textTitle) {
+            this.elements.textTitle.textContent = '';
+        }
+        
+        document.body.style.overflow = '';
+        
+        setTimeout(() => {
+            this.elements.searchInput?.focus();
+        }, 100);
+    }
+    
+    async copyTextToClipboard() {
+        if (!this.elements.textViewer) return;
+        
+        const text = this.elements.textViewer.textContent;
+        
+        if (!text) {
+            this.showNotification('No text to copy', 'warning');
+            return;
+        }
+        
+        try {
+            await navigator.clipboard.writeText(text);
+            this.showNotification('Copied to clipboard', 'success');
+            
+            if (this.elements.copyText) {
+                this.elements.copyText.classList.add('copied');
+                setTimeout(() => {
+                    this.elements.copyText?.classList.remove('copied');
+                }, 2000);
+            }
+        } catch (error) {
+            // Fallback for legacy browsers that don't support Clipboard API
+            // Using deprecated document.execCommand as last resort for IE11 and older browsers
+            try {
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                // Note: execCommand('copy') is deprecated but necessary for legacy browser support
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                this.showNotification('Copied to clipboard', 'success');
+            } catch (fallbackError) {
+                this.showNotification('Failed to copy', 'error');
+            }
+        }
+    }
+    
     render() {
         if (!this.elements.content) return;
         
@@ -748,11 +604,6 @@ class StudyMaterialsApp {
         this.elements.content.innerHTML = this.generateHTML(filtered);
     }
     
-    /**
-     * Filter materials based on search term
-     * @param {Object} materials - Materials object
-     * @returns {Object} Filtered materials
-     */
     filterMaterials(materials) {
         if (!this.searchTerm) return materials;
         
@@ -787,11 +638,6 @@ class StudyMaterialsApp {
         return result;
     }
     
-    /**
-     * Generate HTML for materials grid
-     * @param {Object} materials - Materials object
-     * @returns {string} HTML string
-     */
     generateHTML(materials) {
         const subjectsHTML = Object.entries(materials).map(([subject, data]) => {
             const config = window.SUBJECT_CONFIG?.[subject] || { icon: '?', color: 'resources' };
@@ -816,12 +662,6 @@ class StudyMaterialsApp {
         return `<div class="grid">${subjectsHTML}</div>`;
     }
     
-    /**
-     * Generate HTML for a category
-     * @param {string} category - Category name
-     * @param {Array} pdfs - Array of PDF objects
-     * @returns {string} HTML string
-     */
     generateCategoryHTML(category, pdfs) {
         if (!Array.isArray(pdfs)) return '';
         
@@ -829,8 +669,7 @@ class StudyMaterialsApp {
             if (!pdf || !pdf.file || !pdf.name) return '';
             
             const encodedPath = pdf.file.split('/').map(part => encodeURIComponent(part)).join('/');
-            const isTextFile = pdf.file.endsWith('.txt');
-            const badge = isTextFile ? 'TXT' : 'PDF';
+            const badge = pdf.file.endsWith('.txt') ? 'TXT' : 'PDF';
             
             return `
             <a href="#" class="item" data-pdf="${this.sanitizeAttribute(encodedPath)}" role="button" aria-label="Open ${this.sanitizeText(pdf.name)}">
@@ -851,11 +690,6 @@ class StudyMaterialsApp {
         `;
     }
     
-    /**
-     * Sanitize text for HTML display (XSS protection)
-     * @param {string} text - Text to sanitize
-     * @returns {string} Sanitized text
-     */
     sanitizeText(text) {
         if (typeof text !== 'string') return '';
         const div = document.createElement('div');
@@ -863,11 +697,6 @@ class StudyMaterialsApp {
         return div.innerHTML;
     }
     
-    /**
-     * Sanitize attribute value (XSS protection)
-     * @param {string} value - Attribute value to sanitize
-     * @returns {string} Sanitized value
-     */
     sanitizeAttribute(value) {
         if (typeof value !== 'string') return '';
         return value.replace(/['"<>&]/g, (char) => {
@@ -882,11 +711,6 @@ class StudyMaterialsApp {
         });
     }
     
-    /**
-     * Show notification toast
-     * @param {string} message - Message to display
-     * @param {string} type - Type (success, warning, error)
-     */
     showNotification(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
@@ -896,22 +720,16 @@ class StudyMaterialsApp {
         
         document.body.appendChild(toast);
         
-        // Show toast
         requestAnimationFrame(() => {
             toast.classList.add('show');
         });
         
-        // Remove after 3 seconds
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
     
-    /**
-     * Show error message
-     * @param {string} message - Error message
-     */
     showError(message) {
         if (this.elements.content) {
             this.elements.content.innerHTML = `<div class="empty error">${this.sanitizeText(message)}</div>`;
@@ -919,7 +737,6 @@ class StudyMaterialsApp {
     }
 }
 
-// Initialize app with error boundary
 document.addEventListener('DOMContentLoaded', () => {
     try {
         window.app = new StudyMaterialsApp();
