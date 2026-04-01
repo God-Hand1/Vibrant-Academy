@@ -13,9 +13,9 @@
     <meta name="apple-mobile-web-app-title" content="Vibrant Academy">
     <title>Vibrant Academy | Study Materials</title>
     
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="/icon/icon-192.png">
-    <link rel="apple-touch-icon" href="/icon/icon-192.png">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./icon/icon-192.png">
+    <link rel="apple-touch-icon" href="./icon/icon-192.png">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -183,7 +183,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
                     .then(registration => {
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
