@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.8.0] - 2026-04-01
+
+### Added
+- **Music Player** - full audio playback feature with a persistent bottom player bar
+- New "Music" tab added to desktop and mobile navigation
+- Playback controls: Play/Pause, Previous, Next, Shuffle, Repeat
+- Real-time progress bar with seek and volume slider
+- Close button on the player to stop music and dismiss the bar
+- Auto-close - player automatically stops and hides when switching to any other tab (11th, 12th, Others, Prompts)
+- Music library grid with album-art cards and a spinning animation on the active track
+- Search bar filters songs by title, artist, or folder when on the Music tab
+- 29 songs loaded from `Songs/Song/` (Mix) and `Songs/Sad/` (Sad) folders
+
+### Changed
+- Renamed `Song` folder to `Songs` with categorized subfolders (`Song`, `Sad`)
+- Updated `music-data.js` to reflect the new folder structure and all 29 tracks
+- Tab routing in `app.js` now handles the "music" class value
+- Download button hides on the Music tab
+- Service worker cache bumped to v1.8.0
+- Service worker precache list now includes `music-data.js` and `music-app.js`
+- Added `media-src 'self'` to CSP in `.htaccess` so audio playback works under strict Content Security Policy
+- Added standard `appearance: none` alongside `-webkit-appearance` on range inputs for cross-browser compatibility
+- Replaced emoji in `.empty.error::before` CSS with Unicode escape `\26A0`
+
+### Fixed
+- Fixed potential DOM selector injection in `updatePlayingStateInGrid()` - switched from template literal to string concatenation
+- Fixed three floating promises from `audio.play()` - added `.catch()` handlers in `togglePlay`, `playSong`, and `handleSongEnd`
+- Fixed service worker caching opaque (cross-origin) responses that could corrupt the cache
+- Added `isFinite()` guards in `formatTime()`, `updateProgress()`, and `seek()` to handle `NaN`/`Infinity` edge cases
+- Removed all `console.*` statements from client-side code
+- Cleaned up leading blank lines before `'use strict'` in `app.js`
+
+### Technical
+- Created `music-data.js` - structured song library array on `window.MUSIC_LIBRARY`
+- Created `music-app.js` - `MusicApp` class handling Audio API, queue management, shuffle, repeat, and UI sync
+- All song metadata HTML-sanitized via `sanitizeHTML()` before DOM injection
+- Player slides in/out with CSS `transform: translateY(100%)` transition
+- Global click delegation for music card interactions
+- Production audit completed across all 13 files - Grade A, zero critical issues
+
 ## [1.7.1] - 2026-03-30
 
 ### Enhanced
