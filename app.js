@@ -315,8 +315,11 @@ class StudyMaterialsApp {
     updateDownloadButton() {
         if (!this.elements.downloadBtn || !this.elements.downloadText) return;
         
-        if (this.currentClass === 'others' || this.currentClass === 'prompts' || this.currentClass === 'music') {
+        if (this.currentClass === 'others' || this.currentClass === 'prompts') {
             this.elements.downloadBtn.style.display = 'none';
+        } else if (this.currentClass === 'music') {
+            this.elements.downloadBtn.style.display = 'flex';
+            this.elements.downloadText.textContent = 'Download All Songs';
         } else {
             this.elements.downloadBtn.style.display = 'flex';
             const className = this.currentClass === 11 ? '11th' : '12th';
