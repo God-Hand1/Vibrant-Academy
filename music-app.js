@@ -117,6 +117,8 @@ class MusicApp {
 
     closePlayer() {
         this.audio.pause();
+        this.audio.src = '';
+        this.audio.load();
         this.isPlaying = false;
         this.currentIndex = -1;
         this.updatePlayIcon();
@@ -302,7 +304,13 @@ class MusicApp {
         let html = '<div class="music-grid">';
 
         displayList.forEach(song => {
-            const isCurrentlyPlaying = (this.currentIndex !== -1 && this.currentQueue[this.currentIndex].id === song.id && this.isPlaying);
+            const isCurrentlyPlaying = (
+                this.currentIndex !== -1 && 
+                this.currentIndex < this.currentQueue.length &&
+                this.currentQueue[this.currentIndex] &&
+                this.currentQueue[this.currentIndex].id === song.id && 
+                this.isPlaying
+            );
             const playingClass = isCurrentlyPlaying ? 'playing' : '';
 
             html += `
