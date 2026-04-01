@@ -1,7 +1,6 @@
-
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v1.7.1';
+const CACHE_NAME = 'vibrant-academy-v1.8.0';
 const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
 // Core assets to cache on install
@@ -12,6 +11,8 @@ const ASSETS_TO_CACHE = [
     './config.js',
     './data.js',
     './app.js',
+    './music-data.js',
+    './music-app.js',
     './icon/logo.png',
     './manifest.json'
 ];
@@ -27,9 +28,6 @@ self.addEventListener('install', (event) => {
             })
             .then(() => {
                 return self.skipWaiting();
-            })
-            .catch(() => {
-                // Cache installation failed - will retry on next load
             })
     );
 });
@@ -60,60 +58,52 @@ self.addEventListener('activate', (event) => {
  */
 self.addEventListener('fetch', (event) => {
     const { request } = event;
-    
+
     // Skip non-GET requests
     if (request.method !== 'GET') {
         return;
     }
-    
+
     // Skip non-http(s) requests
     if (!request.url.startsWith('http')) {
         return;
     }
-    
+
     // Skip cross-origin requests (except fonts and external resources we want to cache)
     const url = new URL(request.url);
     const isOwnOrigin = url.origin === self.location.origin;
-    const isFontOrResource = request.url.includes('fonts.googleapis.com') || 
+    const isFontOrResource = request.url.includes('fonts.googleapis.com') ||
                              request.url.includes('fonts.gstatic.com');
-    
+
     if (!isOwnOrigin && !isFontOrResource) {
         return;
     }
-    
+
     // Cache-first strategy
     event.respondWith(
         caches.match(request)
             .then((cachedResponse) => {
                 if (cachedResponse) {
-                    // Return cached version
                     return cachedResponse;
                 }
-                
-                // Not in cache, fetch from network
+
                 return fetch(request)
                     .then((response) => {
-                        // Check if valid response
-                        if (!response || response.status !== 200) {
+                        // Only cache valid, same-origin responses
+                        if (!response || response.status !== 200 || response.type !== 'basic') {
                             return response;
                         }
-                        
-                        // Clone the response
+
                         const responseToCache = response.clone();
-                        
-                        // Cache the new response
+
                         caches.open(RUNTIME_CACHE)
                             .then((cache) => {
                                 cache.put(request, responseToCache);
-                            })
-                            .catch(() => {
-                                // Cache put failed - continue without caching
                             });
-                        
+
                         return response;
                     })
                     .catch(() => {
-                        // Return offline message
                         return new Response(
                             JSON.stringify({
                                 error: 'Offline',
@@ -139,7 +129,7 @@ self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();
     }
-    
+
     if (event.data && event.data.type === 'CLEAR_CACHE') {
         event.waitUntil(
             caches.keys().then((cacheNames) => {
