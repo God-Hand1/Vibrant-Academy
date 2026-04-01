@@ -1571,6 +1571,12 @@ body {
     overflow: hidden;
     opacity: 0;
     animation: pixelate 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    outline: none;
+}
+
+.music-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 .music-card::before {
@@ -1717,7 +1723,8 @@ body {
     z-index: 10;
 }
 
-.music-card:hover .music-download-btn {
+.music-card:hover .music-download-btn,
+.music-download-btn:focus-visible {
     opacity: 1;
     transform: scale(1);
 }
@@ -1734,9 +1741,21 @@ body {
     transform: scale(0.95);
 }
 
+.music-download-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.music-download-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
 .music-download-btn svg {
     flex-shrink: 0;
     transition: transform 0.3s ease;
+    pointer-events: none;
 }
 
 .music-download-btn:hover svg {
