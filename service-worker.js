@@ -89,8 +89,8 @@ self.addEventListener('fetch', (event) => {
 
                 return fetch(request)
                     .then((response) => {
-                        // Only cache valid, same-origin responses
-                        if (!response || response.status !== 200 || response.type !== 'basic') {
+                        // Only cache valid responses, exclude opaque responses
+                        if (!response || response.status !== 200 || response.type === 'opaque') {
                             return response;
                         }
 
