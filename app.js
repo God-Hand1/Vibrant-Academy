@@ -57,6 +57,18 @@ class StudyMaterialsApp {
     
     init() {
         try {
+            // Verify config is loaded
+            if (!window.SUBJECT_CONFIG) {
+                console.error('SUBJECT_CONFIG not loaded! Defining fallback...');
+                window.SUBJECT_CONFIG = {
+                    Physics: { icon: 'P', color: 'physics' },
+                    Chemistry: { icon: 'C', color: 'chemistry' },
+                    Mathematics: { icon: 'M', color: 'mathematics' },
+                    Resources: { icon: 'R', color: 'resources' },
+                    Prompts: { icon: 'P', color: 'resources' }
+                };
+            }
+            
             this.attachEventListeners();
             this.disableRightClick();
             this.setupPWA();
