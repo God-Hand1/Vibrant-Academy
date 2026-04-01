@@ -1,4 +1,3 @@
-
 'use strict';
 
 /**
@@ -263,10 +262,20 @@ class StudyMaterialsApp {
         btn.classList.add('active');
         
         const classValue = btn.dataset.class;
-        this.currentClass = (classValue === 'others' || classValue === 'prompts') ? classValue : parseInt(classValue, 10);
+        this.currentClass = (classValue === 'others' || classValue === 'prompts' || classValue === 'music') ? classValue : parseInt(classValue, 10);
         
         this.updateDownloadButton();
-        this.render();
+        
+        if (this.currentClass === 'music') {
+            if (window.musicApp) {
+                window.musicApp.render();
+            }
+        } else {
+            if (window.musicApp) {
+                window.musicApp.closePlayer();
+            }
+            this.render();
+        }
     }
     
     handleDownload() {
@@ -306,7 +315,7 @@ class StudyMaterialsApp {
     updateDownloadButton() {
         if (!this.elements.downloadBtn || !this.elements.downloadText) return;
         
-        if (this.currentClass === 'others' || this.currentClass === 'prompts') {
+        if (this.currentClass === 'others' || this.currentClass === 'prompts' || this.currentClass === 'music') {
             this.elements.downloadBtn.style.display = 'none';
         } else {
             this.elements.downloadBtn.style.display = 'flex';
@@ -319,7 +328,11 @@ class StudyMaterialsApp {
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             this.searchTerm = e.target.value.trim();
-            this.render();
+            if (this.currentClass === 'music' && window.musicApp) {
+                window.musicApp.render();
+            } else {
+                this.render();
+            }
         }, this.CONSTANTS.SEARCH_DEBOUNCE);
     }
     
