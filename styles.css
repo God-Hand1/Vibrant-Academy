@@ -1732,6 +1732,29 @@ body {
 }
 
 @media (max-width: 768px) {
+    .music-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+    
+    .music-card {
+        padding: 16px;
+    }
+    
+    .music-cover {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 12px;
+    }
+    
+    .music-title {
+        font-size: 14px;
+    }
+    
+    .music-artist {
+        font-size: 12px;
+    }
+    
     .music-player {
         padding: 0 12px;
         height: 80px;
