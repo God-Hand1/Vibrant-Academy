@@ -1756,37 +1756,104 @@ body {
     }
     
     .music-player {
-        padding: 0 12px;
-        height: 80px;
+        padding: 12px;
+        height: auto;
+        flex-direction: column;
+        gap: 12px;
     }
     
     .player-info {
         width: 100%;
-        max-width: 50%;
+        max-width: 100%;
+        justify-content: center;
+    }
+    
+    .album-art {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .track-details {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .track-title {
+        font-size: 13px;
+    }
+    
+    .track-artist {
+        font-size: 11px;
     }
     
     .player-controls-container {
         width: 100%;
-        max-width: 50%;
-        align-items: flex-end;
-    }
-    
-    .progress-container,
-    .player-volume {
-        display: none;
+        max-width: 100%;
+        gap: 8px;
     }
     
     .player-controls {
-        gap: 16px;
+        gap: 12px;
+        justify-content: center;
     }
     
-    .album-art {
+    .control-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .control-btn.play-btn {
         width: 44px;
         height: 44px;
     }
     
-    .control-btn#btnShuffle,
-    .control-btn#btnRepeat {
-        display: none;
+    .control-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .control-btn.play-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .progress-container {
+        width: 100%;
+        gap: 6px;
+    }
+    
+    .time-display {
+        font-size: 10px;
+        min-width: 35px;
+    }
+    
+    .progress-bar {
+        height: 4px;
+    }
+    
+    .player-volume {
+        width: 100%;
+        justify-content: center;
+        gap: 8px;
+        padding-top: 4px;
+        border-top: 1px solid var(--border);
+    }
+    
+    .player-volume svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .volume-bar {
+        max-width: 120px;
+    }
+    
+    .control-btn#btnClosePlayer {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px;
+        height: 32px;
+        margin: 0;
     }
 }
