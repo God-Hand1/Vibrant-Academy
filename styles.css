@@ -1395,7 +1395,7 @@ body {
 }
 
 .empty.error::before {
-    content: '⚠';
+    content: '\26A0';
 }
 
 /* Mobile toast adjustments */
@@ -1404,5 +1404,302 @@ body {
         right: 16px;
         left: 16px;
         max-width: none;
+    }
+}
+
+/* ================== MUSIC FEATURE STYLES ================== */
+
+/* Music Grid (Custom overrides for music) */
+.music-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding-bottom: 120px; /* space for the fixed player */
+}
+
+.music-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.music-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+
+.music-cover {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--card), var(--surface));
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: var(--text-tertiary);
+    transition: all 0.3s ease;
+}
+
+.music-card:hover .music-cover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+}
+
+.music-card.playing .music-cover {
+    border-color: var(--accent);
+    color: var(--accent);
+    animation: spin 6s linear infinite;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.music-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 4px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.music-artist {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    text-align: center;
+}
+
+/* Fixed Bottom Player */
+.music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 1000;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.music-player.hidden {
+    transform: translateY(100%);
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 30%;
+    min-width: 200px;
+}
+
+.album-art {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-tertiary);
+    flex-shrink: 0;
+}
+
+.track-details {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.track-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-artist {
+    font-size: 12px;
+    color: var(--text-tertiary);
+}
+
+.player-controls-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+    gap: 8px;
+}
+
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.control-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control-btn:hover {
+    color: var(--text);
+    transform: scale(1.1);
+}
+
+.control-btn.play-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+}
+
+.control-btn.play-btn:hover {
+    transform: scale(1.05);
+    background: var(--accent);
+    color: white;
+}
+
+.control-btn.active {
+    color: var(--accent);
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.time-display {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+    min-width: 35px;
+}
+
+.progress-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface);
+    outline: none;
+    cursor: pointer;
+}
+
+.progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.progress-container:hover .progress-bar::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+.player-volume {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    width: 30%;
+    min-width: 150px;
+    color: var(--text-secondary);
+}
+
+.volume-bar {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface);
+    outline: none;
+    cursor: pointer;
+}
+
+.volume-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .music-player {
+        padding: 0 12px;
+        height: 80px;
+    }
+    
+    .player-info {
+        width: 100%;
+        max-width: 50%;
+    }
+    
+    .player-controls-container {
+        width: 100%;
+        max-width: 50%;
+        align-items: flex-end;
+    }
+    
+    .progress-container,
+    .player-volume {
+        display: none;
+    }
+    
+    .player-controls {
+        gap: 16px;
+    }
+    
+    .album-art {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .control-btn#btnShuffle,
+    .control-btn#btnRepeat {
+        display: none;
     }
 }
