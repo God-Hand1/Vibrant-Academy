@@ -13,6 +13,7 @@ class MusicApp {
         this.isShuffle = false;
         this.isRepeat = false;
         this.audio = new Audio();
+        this._lastDownloadTime = 0; // Rate limiting for downloads
 
         this.elements = {
             player: document.getElementById('musicPlayer'),
@@ -83,27 +84,100 @@ class MusicApp {
                 }
             }
         });
+
+        // Keyboard navigation for music cards
+        document.addEventListener('keydown', (e) => {
+            if (window.app && window.app.currentClass !== 'music') return;
+
+            const card = e.target.closest('.music-card');
+            if (card && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                const id = parseInt(card.dataset.id, 10);
+                if (!isNaN(id)) {
+                    this.playSongById(id);
+                }
+            }
+        });
     }
 
     downloadSong(id) {
+        // Validate ID
+        if (!Number.isInteger(id) || id < 1) {
+            if (window.app) window.app.showNotification('Invalid song ID', 'error');
+            return;
+        }
+
+        // Find song
         const song = this.library.find(s => s.id === id);
         if (!song) {
             if (window.app) window.app.showNotification('Song not found', 'error');
             return;
         }
 
+        // Validate song data
+        if (!song.src || typeof song.src !== 'string') {
+            if (window.app) window.app.showNotification('Invalid song source', 'error');
+            return;
+        }
+
+        // Validate file path (prevent path traversal)
+        if (song.src.includes('..') || song.src.startsWith('/') || song.src.includes('\\')) {
+            if (window.app) window.app.showNotification('Invalid file path', 'error');
+            return;
+        }
+
+        // Validate file extension
+        if (!song.src.toLowerCase().endsWith('.mp3')) {
+            if (window.app) window.app.showNotification('Invalid file type', 'error');
+            return;
+        }
+
+        // Rate limiting check (max 1 download per second)
+        const now = Date.now();
+        if (this._lastDownloadTime && (now - this._lastDownloadTime) < 1000) {
+            if (window.app) window.app.showNotification('Please wait before downloading again', 'warning');
+            return;
+        }
+        this._lastDownloadTime = now;
+
+        // Sanitize filename (remove dangerous characters)
+        const sanitizeFilename = (str) => {
+            if (!str) return 'Unknown';
+            return str
+                .replace(/[<>:"/\\|?*\x00-\x1F]/g, '') // Remove illegal filename chars
+                .replace(/\s+/g, ' ') // Normalize whitespace
+                .trim()
+                .substring(0, 200); // Limit length
+        };
+
+        const safeTitle = sanitizeFilename(song.title);
+        const safeArtist = sanitizeFilename(song.artist || 'Unknown Artist');
+        const filename = `${safeTitle} - ${safeArtist}.mp3`;
+
+        let link = null;
         try {
-            const link = document.createElement('a');
+            link = document.createElement('a');
             link.href = song.src;
-            link.download = `${song.title} - ${song.artist}.mp3`;
+            link.download = filename;
             link.style.display = 'none';
+            link.rel = 'noopener noreferrer'; // Security: prevent window.opener access
+            
             document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
             
-            if (window.app) window.app.showNotification(`Downloading ${song.title}`, 'success');
+            if (window.app) {
+                window.app.showNotification(`Downloading: ${safeTitle}`, 'success');
+            }
         } catch (error) {
-            if (window.app) window.app.showNotification('Download failed', 'error');
+            console.error('Download failed:', error);
+            if (window.app) {
+                window.app.showNotification('Download failed. Please try again.', 'error');
+            }
+        } finally {
+            // Always cleanup DOM element
+            if (link && link.parentNode) {
+                document.body.removeChild(link);
+            }
         }
     }
 
@@ -346,8 +420,12 @@ class MusicApp {
             const playingClass = isCurrentlyPlaying ? 'playing' : '';
 
             html += `
-                <div class="music-card ${playingClass}" data-id="${song.id}">
-                    <div class="music-cover">
+                <div class="music-card ${playingClass}" 
+                     data-id="${song.id}" 
+                     role="article" 
+                     tabindex="0"
+                     aria-label="Song: ${this.sanitizeHTML(song.title)} by ${this.sanitizeHTML(song.artist || song.folder)}">
+                    <div class="music-cover" aria-hidden="true">
                         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="5.5" cy="17.5" r="2.5"></circle>
                             <circle cx="17.5" cy="15.5" r="2.5"></circle>
@@ -357,8 +435,12 @@ class MusicApp {
                     </div>
                     <div class="music-title" title="${this.sanitizeHTML(song.title)}">${this.sanitizeHTML(song.title)}</div>
                     <div class="music-artist">${this.sanitizeHTML(song.artist || song.folder)}</div>
-                    <button class="music-download-btn" data-id="${song.id}" title="Download ${this.sanitizeHTML(song.title)}">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button class="music-download-btn" 
+                            data-id="${song.id}" 
+                            type="button"
+                            aria-label="Download ${this.sanitizeHTML(song.title)} by ${this.sanitizeHTML(song.artist || song.folder)}"
+                            title="Download ${this.sanitizeHTML(song.title)}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
