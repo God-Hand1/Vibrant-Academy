@@ -2,33 +2,33 @@
   "name": "Vibrant Academy Study Materials",
   "short_name": "Vibrant Academy",
   "description": "Access Class 11th and 12th study materials for Physics, Chemistry, and Mathematics offline",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0f0f0f",
   "theme_color": "#ff4757",
   "orientation": "any",
   "icons": [
     {
-      "src": "/icon/icon-192.png",
+      "src": "./icon/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon/icon-512.png",
+      "src": "./icon/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon/icon-192.png",
+      "src": "./icon/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icon/icon-512.png",
+      "src": "./icon/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -41,10 +41,10 @@
       "name": "Class 11th Materials",
       "short_name": "Class 11",
       "description": "Access Class 11th study materials",
-      "url": "/?class=11",
+      "url": "./?class=11",
       "icons": [
         {
-          "src": "/icon/icon-192.png",
+          "src": "./icon/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -54,10 +54,10 @@
       "name": "Class 12th Materials",
       "short_name": "Class 12",
       "description": "Access Class 12th study materials",
-      "url": "/?class=12",
+      "url": "./?class=12",
       "icons": [
         {
-          "src": "/icon/icon-192.png",
+          "src": "./icon/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
