@@ -234,11 +234,17 @@ class StudyMaterialsApp {
         
         try {
             await this.deferredPrompt.prompt();
-            await this.deferredPrompt.userChoice;
+            const choiceResult = await this.deferredPrompt.userChoice;
+            
+            if (choiceResult.outcome === 'accepted') {
+                this.showNotification('App will be installed', 'success');
+            }
+            
             this.deferredPrompt = null;
             this.hideInstallPrompt();
         } catch (error) {
-            this.showNotification('Installation failed', 'error');
+            this.deferredPrompt = null;
+            this.hideInstallPrompt();
         }
     }
     
@@ -299,7 +305,17 @@ class StudyMaterialsApp {
         try {
             const link = document.createElement('a');
             link.href = zipPath;
-            link.download = `Class_${this.currentClass}_Modules.zip`;
+            
+            let filename;
+            if (this.currentClass === 'music') {
+                filename = 'Songs.zip';
+            } else if (this.currentClass === 11 || this.currentClass === 12) {
+                filename = `Class_${this.currentClass}th_Modules.zip`;
+            } else {
+                filename = `${this.currentClass}_Materials.zip`;
+            }
+            
+            link.download = filename;
             link.rel = 'noopener noreferrer';
             link.style.display = 'none';
             document.body.appendChild(link);
@@ -750,10 +766,18 @@ class StudyMaterialsApp {
             toast.classList.add('show');
         });
         
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        const removeToast = () => {
+            if (toast.parentNode) {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }
+        };
+        
+        setTimeout(removeToast, 3000);
     }
     
     showError(message) {
