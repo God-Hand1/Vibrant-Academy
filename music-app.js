@@ -184,8 +184,8 @@ class MusicApp {
                 this.updatePlayerUI(song);
                 this.updatePlayingStateInGrid();
             })
-            .catch(() => {
-                if (window.app) window.app.showNotification('Could not play song', 'error');
+            .catch((error) => {
+                if (window.app) window.app.showNotification('Could not play song: ' + error.message, 'error');
             });
 
         this.elements.player?.classList.remove('hidden');
