@@ -65,6 +65,16 @@ class MusicApp {
         document.addEventListener('click', (e) => {
             if (window.app && window.app.currentClass !== 'music') return;
 
+            const downloadBtn = e.target.closest('.music-download-btn');
+            if (downloadBtn) {
+                e.stopPropagation();
+                const id = parseInt(downloadBtn.dataset.id, 10);
+                if (!isNaN(id)) {
+                    this.downloadSong(id);
+                }
+                return;
+            }
+
             const card = e.target.closest('.music-card');
             if (card) {
                 const id = parseInt(card.dataset.id, 10);
@@ -73,6 +83,28 @@ class MusicApp {
                 }
             }
         });
+    }
+
+    downloadSong(id) {
+        const song = this.library.find(s => s.id === id);
+        if (!song) {
+            if (window.app) window.app.showNotification('Song not found', 'error');
+            return;
+        }
+
+        try {
+            const link = document.createElement('a');
+            link.href = song.src;
+            link.download = `${song.title} - ${song.artist}.mp3`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            if (window.app) window.app.showNotification(`Downloading ${song.title}`, 'success');
+        } catch (error) {
+            if (window.app) window.app.showNotification('Download failed', 'error');
+        }
     }
 
     formatTime(seconds) {
@@ -325,6 +357,13 @@ class MusicApp {
                     </div>
                     <div class="music-title" title="${this.sanitizeHTML(song.title)}">${this.sanitizeHTML(song.title)}</div>
                     <div class="music-artist">${this.sanitizeHTML(song.artist || song.folder)}</div>
+                    <button class="music-download-btn" data-id="${song.id}" title="Download ${this.sanitizeHTML(song.title)}">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
                 </div>
             `;
         });
