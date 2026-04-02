@@ -65,6 +65,7 @@ self.addEventListener('fetch', (event) => {
                     })
                     .catch(() => {
                         // Cache write failed, continue without caching
+                        // This can occur when cache storage is full or disabled
                     });
 
                 return response;
