@@ -29,8 +29,7 @@
     <link rel="stylesheet" href="./styles.css">
     
     <!-- Load fonts asynchronously -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="nav">
@@ -201,31 +200,6 @@
     <script src="./music-data.js"></script>
     <script src="./app.js"></script>
     <script src="./music-app.js"></script>
-    
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
-                    .then(registration => {
-                        registration.update();
-                        
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            if (newWorker) {
-                                newWorker.addEventListener('statechange', () => {
-                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                        window.location.reload();
-                                    }
-                                });
-                            }
-                        });
-                    })
-                    .catch(() => {
-                        // ServiceWorker registration failed
-                    });
-            });
-        }
-    </script>
+    <script src="./sw-register.js"></script>
 </body>
 </html>
