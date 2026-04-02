@@ -143,7 +143,13 @@ class MusicApp {
             return;
         }
 
-        if (song.src.includes('..') || song.src.startsWith('/') || song.src.includes('\\')) {
+        // Whitelist validation: only allow Songs/ directory
+        if (!song.src.startsWith('Songs/')) {
+            if (window.app) window.app.showNotification('Invalid file path', 'error');
+            return;
+        }
+
+        if (song.src.includes('..') || song.src.includes('\\') || song.src.includes('//')) {
             if (window.app) window.app.showNotification('Invalid file path', 'error');
             return;
         }
