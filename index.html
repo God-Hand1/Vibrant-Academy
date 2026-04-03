@@ -6,12 +6,6 @@
     <meta name="description" content="Vibrant Academy - Study Materials for Class 11th and 12th Physics, Chemistry, and Mathematics">
     <meta name="author" content="Vibrant Academy">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <!-- Prevent caching - always fetch fresh content -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
     <meta name="theme-color" content="#ff4757">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -199,34 +193,21 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js', { 
-                    scope: './',
-                    updateViaCache: 'none' // Don't cache the service worker itself
-                })
+                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
                     .then(registration => {
-                        // Check for updates every time the page loads
-                        registration.update();
-                        
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             if (newWorker) {
                                 newWorker.addEventListener('statechange', () => {
                                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // New version available - force reload
-                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                        window.location.reload();
+                                        // New version available
                                     }
                                 });
                             }
                         });
-                        
-                        // Listen for controller change and reload
-                        navigator.serviceWorker.addEventListener('controllerchange', () => {
-                            window.location.reload();
-                        });
                     })
                     .catch(error => {
-                        console.error('ServiceWorker registration failed:', error);
+                        // ServiceWorker registration failed
                     });
             });
         }
