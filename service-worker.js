@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v1.8.0';
+const CACHE_NAME = 'vibrant-academy-v1.9.0';
 const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
 // Core assets to cache on install
