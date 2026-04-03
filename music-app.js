@@ -182,7 +182,9 @@ class MusicApp {
         let link = null;
         try {
             link = document.createElement('a');
-            link.href = song.src;
+            // Get the correct URL based on environment
+            const downloadUrl = window.CONFIG?.getFileUrl ? window.CONFIG.getFileUrl(song.src) : song.src;
+            link.href = downloadUrl;
             link.download = filename;
             link.style.display = 'none';
             link.rel = 'noopener noreferrer';
@@ -314,7 +316,10 @@ class MusicApp {
         this.currentIndex = index;
         const song = this.currentQueue[this.currentIndex];
 
-        this.audio.src = song.src;
+        // Get the correct URL based on environment (production vs localhost)
+        const songUrl = window.CONFIG?.getFileUrl ? window.CONFIG.getFileUrl(song.src) : song.src;
+        
+        this.audio.src = songUrl;
         this.audio.play()
             .then(() => {
                 this.isPlaying = true;
