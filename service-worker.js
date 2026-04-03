@@ -1,42 +1,60 @@
 'use strict';
 
-/**
- * Service Worker - Network-First, No Cache Strategy
- * Always fetches fresh content from the server
- * No caching to ensure users always get the latest code
- */
+const CACHE_NAME = 'vibrant-academy-v1.8.0';
+const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
-const CACHE_NAME = 'vibrant-academy-no-cache';
+// Core assets to cache on install
+const ASSETS_TO_CACHE = [
+    './',
+    './index.html',
+    './styles.css',
+    './config.js',
+    './data.js',
+    './app.js',
+    './music-data.js',
+    './music-app.js',
+    './icon/logo.png',
+    './manifest.json'
+];
 
 /**
- * Install event - skip waiting immediately
+ * Install event - cache core assets
  */
 self.addEventListener('install', (event) => {
-    // Skip waiting to activate immediately
-    self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                return cache.addAll(ASSETS_TO_CACHE);
+            })
+            .then(() => {
+                return self.skipWaiting();
+            })
+    );
 });
 
 /**
- * Activate event - clean up all caches and take control
+ * Activate event - clean up old caches
  */
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
-                // Delete all existing caches
                 return Promise.all(
-                    cacheNames.map((cacheName) => caches.delete(cacheName))
+                    cacheNames.map((cacheName) => {
+                        if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
+                            return caches.delete(cacheName);
+                        }
+                    })
                 );
             })
             .then(() => {
-                // Take control of all clients immediately
                 return self.clients.claim();
             })
     );
 });
 
 /**
- * Fetch event - always fetch from network, no caching
+ * Fetch event - cache-first strategy with network fallback
  */
 self.addEventListener('fetch', (event) => {
     const { request } = event;
@@ -51,37 +69,56 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Network-first strategy with no caching
+    // Skip cross-origin requests (except fonts and external resources we want to cache)
+    const url = new URL(request.url);
+    const isOwnOrigin = url.origin === self.location.origin;
+    const isFontOrResource = request.url.includes('fonts.googleapis.com') ||
+                             request.url.includes('fonts.gstatic.com');
+
+    if (!isOwnOrigin && !isFontOrResource) {
+        return;
+    }
+
+    // Cache-first strategy
     event.respondWith(
-        fetch(request, {
-            cache: 'no-store', // Don't use browser cache
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
-        })
-        .then((response) => {
-            // Return fresh response from network
-            return response;
-        })
-        .catch((error) => {
-            // If network fails, return error response
-            return new Response(
-                JSON.stringify({
-                    error: 'Network Error',
-                    message: 'Unable to fetch content. Please check your internet connection.'
-                }),
-                {
-                    status: 503,
-                    statusText: 'Service Unavailable',
-                    headers: new Headers({
-                        'Content-Type': 'application/json',
-                        'Cache-Control': 'no-cache, no-store, must-revalidate'
-                    })
+        caches.match(request)
+            .then((cachedResponse) => {
+                if (cachedResponse) {
+                    return cachedResponse;
                 }
-            );
-        })
+
+                return fetch(request)
+                    .then((response) => {
+                        // Only cache valid responses, exclude opaque responses
+                        if (!response || response.status !== 200 || response.type === 'opaque') {
+                            return response;
+                        }
+
+                        const responseToCache = response.clone();
+
+                        caches.open(RUNTIME_CACHE)
+                            .then((cache) => {
+                                cache.put(request, responseToCache);
+                            });
+
+                        return response;
+                    })
+                    .catch(() => {
+                        return new Response(
+                            JSON.stringify({
+                                error: 'Offline',
+                                message: 'You are offline and this content is not cached'
+                            }),
+                            {
+                                status: 503,
+                                statusText: 'Service Unavailable',
+                                headers: new Headers({
+                                    'Content-Type': 'application/json'
+                                })
+                            }
+                        );
+                    });
+            })
     );
 });
 
