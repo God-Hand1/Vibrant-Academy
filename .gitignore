@@ -104,11 +104,8 @@ test123.*
 *.zip
 !Vibrant\ Academy\ Modules/**/*.zip
 
-# Original unoptimized assets
-icon/logo-original.png
-
 # VSCode Settings (project-specific settings can be shared if needed)
-# .vscode/
+.vscode/
 
 # Development and Testing Scripts
 *.sh
