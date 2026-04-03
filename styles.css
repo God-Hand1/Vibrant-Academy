@@ -1933,6 +1933,21 @@ body {
     background: var(--surface);
     outline: none;
     cursor: pointer;
+    position: relative;
+}
+
+.progress-bar::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface);
+}
+
+.progress-bar::-moz-range-track {
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--surface);
 }
 
 .progress-bar::-webkit-slider-thumb {
@@ -1945,10 +1960,32 @@ body {
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.2s;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-bar::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text);
+    cursor: pointer;
+    border: none;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
 .progress-container:hover .progress-bar::-webkit-slider-thumb {
     opacity: 1;
+}
+
+.progress-container:hover .progress-bar::-moz-range-thumb {
+    opacity: 1;
+}
+
+/* Progress fill effect using gradient */
+.progress-bar {
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--progress, 0%), var(--surface) var(--progress, 0%), var(--surface) 100%);
 }
 
 .player-volume {
