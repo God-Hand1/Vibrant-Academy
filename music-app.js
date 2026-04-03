@@ -563,7 +563,6 @@ class MusicApp {
 
         Object.keys(playlists).forEach((folder) => {
             const songs = playlists[folder];
-            const playlistId = `playlist-${folder.toLowerCase().replace(/\s+/g, '-')}`;
             
             html += `
                 <div class="playlist" data-playlist="${this.sanitizeHTML(folder)}">
@@ -594,7 +593,7 @@ class MusicApp {
                             </div>
                         </div>
                     </div>
-                    <div class="playlist-songs" id="${playlistId}">
+                    <div class="playlist-songs">
             `;
 
             songs.forEach((song, songIndex) => {
