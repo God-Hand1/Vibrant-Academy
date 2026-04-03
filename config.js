@@ -5,7 +5,7 @@ window.CONFIG = {
     GITHUB_REPO: 'God-Hand1/Vibrant-Academy',
     GITHUB_BRANCH: 'main',
     // Check if running on GitHub Pages (production)
-    IS_PRODUCTION: window.location.hostname.includes('github.io'),
+    IS_PRODUCTION: window.location.hostname === 'god-hand1.github.io' || window.location.hostname.endsWith('.github.io'),
     DOWNLOAD_PATHS: {
         11: 'https://github.com/God-Hand1/Vibrant-Academy/releases/download/V1.0.0/Class.11th.Modules.zip',
         12: 'https://github.com/God-Hand1/Vibrant-Academy/releases/download/V1.0.0/Class.12th.Modules.zip',
