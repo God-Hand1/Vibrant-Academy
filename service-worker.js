@@ -72,8 +72,10 @@ self.addEventListener('fetch', (event) => {
     // Skip cross-origin requests (except fonts and external resources we want to cache)
     const url = new URL(request.url);
     const isOwnOrigin = url.origin === self.location.origin;
-    const isFontOrResource = request.url.includes('fonts.googleapis.com') ||
-                             request.url.includes('fonts.gstatic.com');
+    
+    // Whitelist specific trusted domains for fonts
+    const trustedDomains = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+    const isFontOrResource = trustedDomains.some(domain => url.hostname === domain);
 
     if (!isOwnOrigin && !isFontOrResource) {
         return;
