@@ -31,25 +31,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Prepare lightweight deployment
-        run: |
-          # Remove large media files before upload to stay under 1GB limit
-          # PDFs and MP3s are accessed directly from the repository, not from Pages
-          rm -rf "Vibrant Academy Modules"
-          rm -rf Songs
-          
-          # Create placeholder directories so paths don't break
-          mkdir -p "Vibrant Academy Modules"
-          mkdir -p Songs/Sad
-          mkdir -p Songs/Song
-          
-          echo "Deployment prepared: code only, media accessed from repo"
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload current directory (now without large media files)
+          # Upload entire repository
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
