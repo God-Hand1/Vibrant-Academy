@@ -6,6 +6,12 @@
     <meta name="description" content="Vibrant Academy - Study Materials for Class 11th and 12th Physics, Chemistry, and Mathematics">
     <meta name="author" content="Vibrant Academy">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Prevent caching - always fetch fresh content -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <meta name="theme-color" content="#ff4757">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -55,12 +61,22 @@
                 <button class="tab" data-class="prompts">Prompts</button>
             </div>
             <input type="text" id="searchInput" placeholder="Search materials..." class="search">
-            <button id="downloadBtn" class="download-btn" aria-label="Download complete class modules">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                <span id="downloadText">Download All Materials</span>
-            </button>
+            <div class="action-buttons">
+                <button id="viewToggleBtn" class="view-toggle-btn-main" aria-label="Toggle view mode" title="Toggle view mode" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="viewToggleIcon">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                </button>
+                <button id="downloadBtn" class="download-btn" aria-label="Download complete class modules">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                    </svg>
+                    <span id="downloadText">Download All Materials</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -183,21 +199,34 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+                navigator.serviceWorker.register('./service-worker.js', { 
+                    scope: './',
+                    updateViaCache: 'none' // Don't cache the service worker itself
+                })
                     .then(registration => {
+                        // Check for updates every time the page loads
+                        registration.update();
+                        
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             if (newWorker) {
                                 newWorker.addEventListener('statechange', () => {
                                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // New version available
+                                        // New version available - force reload
+                                        newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                        window.location.reload();
                                     }
                                 });
                             }
                         });
+                        
+                        // Listen for controller change and reload
+                        navigator.serviceWorker.addEventListener('controllerchange', () => {
+                            window.location.reload();
+                        });
                     })
                     .catch(error => {
-                        // ServiceWorker registration failed
+                        console.error('ServiceWorker registration failed:', error);
                     });
             });
         }
