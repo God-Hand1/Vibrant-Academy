@@ -43,8 +43,8 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(request.url);
     const isOwnOrigin = url.origin === self.location.origin;
-    const isFontOrResource = request.url.includes('fonts.googleapis.com') ||
-                             request.url.includes('fonts.gstatic.com');
+    const isFontOrResource = url.hostname === 'fonts.googleapis.com' ||
+                             url.hostname === 'fonts.gstatic.com';
 
     if (!isOwnOrigin && !isFontOrResource) {
         return;
