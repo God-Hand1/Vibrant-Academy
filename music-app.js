@@ -216,6 +216,7 @@ class MusicApp {
             const percent = (this.audio.currentTime / this.audio.duration) * 100;
             if (this.elements.progressBar) {
                 this.elements.progressBar.value = percent;
+                this.elements.progressBar.style.setProperty('--progress', `${percent}%`);
             }
             if (this.elements.timeCurrent) {
                 this.elements.timeCurrent.textContent = this.formatTime(this.audio.currentTime);
@@ -228,6 +229,9 @@ class MusicApp {
             const percent = parseFloat(e.target.value);
             if (!isNaN(percent)) {
                 this.audio.currentTime = (percent / 100) * this.audio.duration;
+                if (this.elements.progressBar) {
+                    this.elements.progressBar.style.setProperty('--progress', `${percent}%`);
+                }
             }
         }
     }
@@ -313,6 +317,15 @@ class MusicApp {
 
         this.currentIndex = index;
         const song = this.currentQueue[this.currentIndex];
+
+        // Reset progress bar
+        if (this.elements.progressBar) {
+            this.elements.progressBar.value = 0;
+            this.elements.progressBar.style.setProperty('--progress', '0%');
+        }
+        if (this.elements.timeCurrent) {
+            this.elements.timeCurrent.textContent = '0:00';
+        }
 
         this.audio.src = song.src;
         this.audio.play()
