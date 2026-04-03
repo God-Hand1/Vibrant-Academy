@@ -14,6 +14,7 @@ class MusicApp {
         this.isRepeat = false;
         this.audio = new Audio();
         this._lastDownloadTime = 0;
+        this._isTogglingPlay = false;
 
         this.elements = {
             player: document.getElementById('musicPlayer'),
@@ -43,16 +44,20 @@ class MusicApp {
     }
 
     setupEventListeners() {
-        this.audio.addEventListener('timeupdate', () => this.updateProgress());
-        this.audio.addEventListener('ended', () => this.handleSongEnd());
-        this.audio.addEventListener('loadedmetadata', () => {
+        this._boundUpdateProgress = () => this.updateProgress();
+        this._boundHandleSongEnd = () => this.handleSongEnd();
+        this._boundHandleLoadedMetadata = () => {
             if (this.elements.timeTotal) {
                 this.elements.timeTotal.textContent = this.formatTime(this.audio.duration);
             }
             if (this.elements.progressBar) {
                 this.elements.progressBar.max = 100;
             }
-        });
+        };
+
+        this.audio.addEventListener('timeupdate', this._boundUpdateProgress);
+        this.audio.addEventListener('ended', this._boundHandleSongEnd);
+        this.audio.addEventListener('loadedmetadata', this._boundHandleLoadedMetadata);
 
         this.elements.playBtn?.addEventListener('click', () => this.togglePlay());
         this.elements.nextBtn?.addEventListener('click', () => this.playNext());
@@ -250,12 +255,24 @@ class MusicApp {
         }
     }
 
+    cleanup() {
+        if (this.audio) {
+            this.audio.removeEventListener('timeupdate', this._boundUpdateProgress);
+            this.audio.removeEventListener('ended', this._boundHandleSongEnd);
+            this.audio.removeEventListener('loadedmetadata', this._boundHandleLoadedMetadata);
+            this.audio.pause();
+            this.audio.src = '';
+            this.audio.load();
+        }
+    }
+
     closePlayer() {
         this.audio.pause();
         this.audio.src = '';
         this.audio.load();
         this.isPlaying = false;
         this.currentIndex = -1;
+        this._isTogglingPlay = false;
         this.updatePlayIcon();
         this.updatePlayingStateInGrid();
         if (this.elements.player) {
@@ -263,26 +280,35 @@ class MusicApp {
         }
     }
 
-    togglePlay() {
-        if (this.currentIndex === -1) {
-            if (this.currentQueue.length > 0) {
-                this.playSong(0);
-            }
-            return;
-        }
+    async togglePlay() {
+        if (this._isTogglingPlay) return;
+        this._isTogglingPlay = true;
 
-        if (this.isPlaying) {
-            this.audio.pause();
-            this.isPlaying = false;
-        } else {
-            this.audio.play().catch(() => {
-                if (window.app) window.app.showNotification('Playback requires interaction', 'warning');
+        try {
+            if (this.currentIndex === -1) {
+                if (this.currentQueue.length > 0) {
+                    await this.playSong(0);
+                }
+                return;
+            }
+
+            if (this.isPlaying) {
+                this.audio.pause();
                 this.isPlaying = false;
-            });
-            this.isPlaying = true;
+            } else {
+                try {
+                    await this.audio.play();
+                    this.isPlaying = true;
+                } catch (error) {
+                    if (window.app) window.app.showNotification('Playback requires interaction', 'warning');
+                    this.isPlaying = false;
+                }
+            }
+            this.updatePlayIcon();
+            this.updatePlayingStateInGrid();
+        } finally {
+            this._isTogglingPlay = false;
         }
-        this.updatePlayIcon();
-        this.updatePlayingStateInGrid();
     }
 
     updatePlayIcon() {
@@ -310,28 +336,27 @@ class MusicApp {
         }
     }
 
-    playSong(index) {
+    async playSong(index) {
         if (index < 0 || index >= this.currentQueue.length) return;
 
         this.currentIndex = index;
         const song = this.currentQueue[this.currentIndex];
 
-        // Get the correct URL based on environment (production vs localhost)
         const songUrl = window.CONFIG?.getFileUrl ? window.CONFIG.getFileUrl(song.src) : song.src;
         
         this.audio.src = songUrl;
-        this.audio.play()
-            .then(() => {
-                this.isPlaying = true;
-                this.updatePlayIcon();
-                this.updatePlayerUI(song);
-                this.updatePlayingStateInGrid();
-            })
-            .catch((error) => {
-                this.isPlaying = false;
-                this.updatePlayIcon();
-                if (window.app) window.app.showNotification('Could not play song', 'error');
-            });
+        
+        try {
+            await this.audio.play();
+            this.isPlaying = true;
+            this.updatePlayIcon();
+            this.updatePlayerUI(song);
+            this.updatePlayingStateInGrid();
+        } catch (error) {
+            this.isPlaying = false;
+            this.updatePlayIcon();
+            if (window.app) window.app.showNotification('Could not play song', 'error');
+        }
 
         this.elements.player?.classList.remove('hidden');
     }
@@ -361,13 +386,15 @@ class MusicApp {
         this.playSong(prevIndex);
     }
 
-    handleSongEnd() {
+    async handleSongEnd() {
         if (this.isRepeat) {
             this.audio.currentTime = 0;
-            this.audio.play().catch(() => {
+            try {
+                await this.audio.play();
+            } catch (error) {
                 this.isPlaying = false;
                 this.updatePlayIcon();
-            });
+            }
         } else {
             this.playNext();
         }
@@ -382,7 +409,11 @@ class MusicApp {
         const currentSong = this.currentIndex !== -1 ? this.currentQueue[this.currentIndex] : null;
 
         if (this.isShuffle) {
-            this.currentQueue = [...this.library].sort(() => Math.random() - 0.5);
+            this.currentQueue = [...this.library];
+            for (let i = this.currentQueue.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [this.currentQueue[i], this.currentQueue[j]] = [this.currentQueue[j], this.currentQueue[i]];
+            }
         } else {
             this.currentQueue = [...this.library];
         }
