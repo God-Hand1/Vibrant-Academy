@@ -6,7 +6,7 @@ window.MUSIC_LIBRARY = [
     { id: 4, title: 'Cheques', src: 'Songs/Song/Cheques.mp3', folder: 'Mix', artist: 'Shubh' },
     { id: 5, title: 'Dhundhala', src: 'Songs/Song/Dhundhala.mp3', folder: 'Mix', artist: 'Yashraj' },
     { id: 6, title: 'Espresso', src: 'Songs/Song/Espresso.mp3', folder: 'Mix', artist: 'Sabrina Carpenter' },
-    { id: 7, title: 'Fallin for You', src: 'Songs/Song/Fallin for You.mp3', folder: 'Mix', artist: 'Shiloh Dynasty' },
+    { id: 7, title: 'Fallin for You', src: 'Songs/Song/Fallin for You.mp3', folder: 'Mix', artist: 'Shrey Singhal' },
     { id: 8, title: 'Fell For You', src: 'Songs/Song/Fell For You.mp3', folder: 'Mix', artist: 'Green Day' },
     { id: 9, title: 'Harleys In Hawaii', src: 'Songs/Song/Harleys In Hawaii.mp3', folder: 'Mix', artist: 'Katy Perry' },
     { id: 10, title: 'I Wanna be Yours', src: 'Songs/Song/I Wanna be Yours.mp3', folder: 'Mix', artist: 'Arctic Monkeys' },
