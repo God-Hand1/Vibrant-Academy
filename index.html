@@ -14,8 +14,8 @@
     <title>Vibrant Academy | Study Materials</title>
     
     <link rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/png" href="./icon/logo.png">
-    <link rel="apple-touch-icon" href="./icon/logo.png">
+    <link rel="icon" type="image/png" href="./icon/icon-192.png">
+    <link rel="apple-touch-icon" href="./icon/icon-192.png">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -55,22 +55,12 @@
                 <button class="tab" data-class="prompts">Prompts</button>
             </div>
             <input type="text" id="searchInput" placeholder="Search materials..." class="search">
-            <div class="action-buttons">
-                <button id="viewToggleBtn" class="view-toggle-btn-main" aria-label="Toggle view mode" title="Toggle view mode" style="display: none;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="viewToggleIcon">
-                        <rect x="3" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect>
-                        <rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                </button>
-                <button id="downloadBtn" class="download-btn" aria-label="Download complete class modules">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                    </svg>
-                    <span id="downloadText">Download All Materials</span>
-                </button>
-            </div>
+            <button id="downloadBtn" class="download-btn" aria-label="Download complete class modules">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span id="downloadText">Download All Materials</span>
+            </button>
         </div>
     </div>
 

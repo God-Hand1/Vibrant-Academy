@@ -1,6 +1,6 @@
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v1.9.0';
+const CACHE_NAME = 'vibrant-academy-v1.8.0';
 const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
 // Core assets to cache on install
@@ -72,10 +72,8 @@ self.addEventListener('fetch', (event) => {
     // Skip cross-origin requests (except fonts and external resources we want to cache)
     const url = new URL(request.url);
     const isOwnOrigin = url.origin === self.location.origin;
-    
-    // Whitelist specific trusted domains for fonts
-    const trustedDomains = ['fonts.googleapis.com', 'fonts.gstatic.com'];
-    const isFontOrResource = trustedDomains.some(domain => url.hostname === domain);
+    const isFontOrResource = request.url.includes('fonts.googleapis.com') ||
+                             request.url.includes('fonts.gstatic.com');
 
     if (!isOwnOrigin && !isFontOrResource) {
         return;
