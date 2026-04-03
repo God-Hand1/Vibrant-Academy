@@ -24,7 +24,7 @@ window.MUSIC_LIBRARY = [
     { id: 20, title: 'Deewane Hum Nahi Hote', src: 'Songs/Sad/Deewane Hum Nahi Hote.mp3', folder: 'Sad', artist: 'Sonu Nigam' },
     { id: 21, title: 'Die With A Smile', src: 'Songs/Sad/Die With A Smile.mp3', folder: 'Sad', artist: 'Bruno Mars & Lady Gaga' },
     { id: 22, title: 'High On You', src: 'Songs/Sad/High On You.mp3', folder: 'Sad', artist: 'Jind' },
-    { id: 23, title: 'In The Pool', src: 'Songs/Sad/In The Pool.mp3', folder: 'Coding', artist: 'Marie Madeleine' },
+    { id: 23, title: 'In The Sea', src: 'Songs/Sad/In The Sea.mp3', folder: 'Coding', artist: 'Marie Madeleine' },
     { id: 24, title: 'In The Stars', src: 'Songs/Sad/In The Stars.mp3', folder: 'Sad', artist: 'Benson Boone' },
     { id: 25, title: 'Kamin', src: 'Songs/Sad/Kamin.mp3', folder: 'Coding', artist: 'Diljit Dosanjh' },
     { id: 26, title: 'Love Story', src: 'Songs/Sad/Love Story.mp3', folder: 'Sad', artist: 'Indila' },
