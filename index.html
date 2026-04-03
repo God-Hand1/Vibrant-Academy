@@ -6,6 +6,12 @@
     <meta name="description" content="Vibrant Academy - Study Materials for Class 11th and 12th Physics, Chemistry, and Mathematics">
     <meta name="author" content="Vibrant Academy">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- No-cache directives for HTML -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <meta name="theme-color" content="#ff4757">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -181,24 +187,47 @@
     <script src="./music-app.js"></script>
     
     <script>
+        /**
+         * Service Worker Registration with no-cache policy
+         */
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+                navigator.serviceWorker.register('./service-worker.js', { 
+                    scope: './',
+                    updateViaCache: 'none'
+                })
                     .then(registration => {
+                        // Check for updates immediately
+                        registration.update();
+
+                        // Check for updates every 60 seconds
+                        setInterval(() => {
+                            registration.update();
+                        }, 60000);
+
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             if (newWorker) {
                                 newWorker.addEventListener('statechange', () => {
                                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // New version available
+                                        // New version available - notify user
+                                        if (confirm('New version available! Reload to update?')) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                            window.location.reload();
+                                        }
                                     }
                                 });
                             }
                         });
                     })
                     .catch(error => {
-                        // ServiceWorker registration failed
+                        console.error('ServiceWorker registration failed:', error);
                     });
+
+                // Handle controller change
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    window.location.reload();
+                });
             });
         }
     </script>
