@@ -1,24 +1,50 @@
 'use strict';
 
-const CACHE_NAME = 'vibrant-academy-v2.0.0';
+const CACHE_NAME = 'vibrant-academy-v1.8.0';
 const RUNTIME_CACHE = 'vibrant-academy-runtime';
 
+// Core assets to cache on install
+const ASSETS_TO_CACHE = [
+    './',
+    './index.html',
+    './styles.css',
+    './config.js',
+    './data.js',
+    './app.js',
+    './music-data.js',
+    './music-app.js',
+    './icon/logo.png',
+    './manifest.json'
+];
+
 /**
- * Install event - skip caching, activate immediately
+ * Install event - cache core assets
  */
 self.addEventListener('install', (event) => {
-    event.waitUntil(self.skipWaiting());
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => {
+                return cache.addAll(ASSETS_TO_CACHE);
+            })
+            .then(() => {
+                return self.skipWaiting();
+            })
+    );
 });
 
 /**
- * Activate event - clean up all old caches
+ * Activate event - clean up old caches
  */
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
             .then((cacheNames) => {
                 return Promise.all(
-                    cacheNames.map((cacheName) => caches.delete(cacheName))
+                    cacheNames.map((cacheName) => {
+                        if (cacheName !== CACHE_NAME && cacheName !== RUNTIME_CACHE) {
+                            return caches.delete(cacheName);
+                        }
+                    })
                 );
             })
             .then(() => {
@@ -28,55 +54,56 @@ self.addEventListener('activate', (event) => {
 });
 
 /**
- * Fetch event - network-first strategy, cache only as fallback for offline
+ * Fetch event - cache-first strategy with network fallback
  */
 self.addEventListener('fetch', (event) => {
     const { request } = event;
 
+    // Skip non-GET requests
     if (request.method !== 'GET') {
         return;
     }
 
+    // Skip non-http(s) requests
     if (!request.url.startsWith('http')) {
         return;
     }
 
+    // Skip cross-origin requests (except fonts and external resources we want to cache)
     const url = new URL(request.url);
     const isOwnOrigin = url.origin === self.location.origin;
-    const isFontOrResource = url.hostname === 'fonts.googleapis.com' ||
-                             url.hostname === 'fonts.gstatic.com';
+    const isFontOrResource = request.url.includes('fonts.googleapis.com') ||
+                             request.url.includes('fonts.gstatic.com');
 
     if (!isOwnOrigin && !isFontOrResource) {
         return;
     }
 
+    // Cache-first strategy
     event.respondWith(
-        fetch(request)
-            .then((response) => {
-                if (!response || response.status !== 200 || response.type === 'opaque') {
-                    return response;
+        caches.match(request)
+            .then((cachedResponse) => {
+                if (cachedResponse) {
+                    return cachedResponse;
                 }
 
-                const responseToCache = response.clone();
+                return fetch(request)
+                    .then((response) => {
+                        // Only cache valid responses, exclude opaque responses
+                        if (!response || response.status !== 200 || response.type === 'opaque') {
+                            return response;
+                        }
 
-                caches.open(RUNTIME_CACHE)
-                    .then((cache) => {
-                        cache.put(request, responseToCache);
+                        const responseToCache = response.clone();
+
+                        caches.open(RUNTIME_CACHE)
+                            .then((cache) => {
+                                cache.put(request, responseToCache);
+                            });
+
+                        return response;
                     })
                     .catch(() => {
-                        // Cache write failed, continue without caching
-                        // This can occur when cache storage is full or disabled
-                    });
-
-                return response;
-            })
-            .catch(() => {
-                return caches.match(request)
-                    .then((cachedResponse) => {
-                        if (cachedResponse) {
-                            return cachedResponse;
-                        }
-                        
                         return new Response(
                             JSON.stringify({
                                 error: 'Offline',
@@ -96,7 +123,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 /**
- * Message event - handle cache clearing
+ * Message event - handle messages from clients
  */
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {

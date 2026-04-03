@@ -59,6 +59,7 @@ class StudyMaterialsApp {
         try {
             // Verify config is loaded
             if (!window.SUBJECT_CONFIG) {
+                console.error('SUBJECT_CONFIG not loaded! Defining fallback...');
                 window.SUBJECT_CONFIG = {
                     Physics: { icon: 'P', color: 'physics' },
                     Chemistry: { icon: 'C', color: 'chemistry' },
@@ -73,7 +74,6 @@ class StudyMaterialsApp {
             this.setupPWA();
             this.setupOnlineDetection();
             this.updateDownloadButton();
-            this.restoreViewMode();
             this.render();
         } catch (error) {
             this.showError('Failed to initialize application');
@@ -91,12 +91,6 @@ class StudyMaterialsApp {
         
         if (this.elements.downloadBtn) {
             this.elements.downloadBtn.addEventListener('click', () => this.handleDownload());
-        }
-        
-        // View toggle button
-        const viewToggle = document.getElementById('viewToggle');
-        if (viewToggle) {
-            viewToggle.addEventListener('click', () => this.toggleView());
         }
         
         document.addEventListener('click', (e) => this.handleItemClick(e));
@@ -127,51 +121,6 @@ class StudyMaterialsApp {
         }
         
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
-    }
-    
-    toggleView() {
-        const viewToggle = document.getElementById('viewToggle');
-        if (!viewToggle) return;
-        
-        const currentMode = viewToggle.dataset.mode;
-        const newMode = currentMode === 'grid' ? 'list' : 'grid';
-        
-        viewToggle.dataset.mode = newMode;
-        localStorage.setItem('music-view-mode', newMode);
-        
-        const gridIcon = viewToggle.querySelector('.grid-icon');
-        const listIcon = viewToggle.querySelector('.list-icon');
-        
-        if (newMode === 'list') {
-            if (gridIcon) gridIcon.style.display = 'none';
-            if (listIcon) listIcon.style.display = 'block';
-        } else {
-            if (gridIcon) gridIcon.style.display = 'block';
-            if (listIcon) listIcon.style.display = 'none';
-        }
-        
-        if (window.musicApp) {
-            window.musicApp.render();
-        }
-    }
-    
-    restoreViewMode() {
-        const viewToggle = document.getElementById('viewToggle');
-        if (!viewToggle) return;
-        
-        const savedMode = localStorage.getItem('music-view-mode') || 'grid';
-        viewToggle.dataset.mode = savedMode;
-        
-        const gridIcon = viewToggle.querySelector('.grid-icon');
-        const listIcon = viewToggle.querySelector('.list-icon');
-        
-        if (savedMode === 'list') {
-            if (gridIcon) gridIcon.style.display = 'none';
-            if (listIcon) listIcon.style.display = 'block';
-        } else {
-            if (gridIcon) gridIcon.style.display = 'block';
-            if (listIcon) listIcon.style.display = 'none';
-        }
     }
     
     handleKeyboard(e) {
@@ -266,13 +215,11 @@ class StudyMaterialsApp {
         actionsDiv.className = 'install-actions';
         
         const installBtn = document.createElement('button');
-        installBtn.type = 'button';
         installBtn.className = 'install-btn';
         installBtn.textContent = 'Install';
         installBtn.setAttribute('aria-label', 'Install application');
         
         const dismissBtn = document.createElement('button');
-        dismissBtn.type = 'button';
         dismissBtn.className = 'dismiss-btn';
         dismissBtn.textContent = '×';
         dismissBtn.setAttribute('aria-label', 'Dismiss install prompt');
@@ -338,7 +285,6 @@ class StudyMaterialsApp {
         this.updateDownloadButton();
         
         if (this.currentClass === 'music') {
-            this.restoreViewMode();
             if (window.musicApp) {
                 window.musicApp.render();
             }
@@ -397,20 +343,15 @@ class StudyMaterialsApp {
     updateDownloadButton() {
         if (!this.elements.downloadBtn || !this.elements.downloadText) return;
         
-        const viewToggle = document.getElementById('viewToggle');
-        
         if (this.currentClass === 'others' || this.currentClass === 'prompts') {
             this.elements.downloadBtn.style.display = 'none';
-            if (viewToggle) viewToggle.style.display = 'none';
         } else if (this.currentClass === 'music') {
             this.elements.downloadBtn.style.display = 'flex';
             this.elements.downloadText.textContent = 'Download All Songs';
-            if (viewToggle) viewToggle.style.display = 'flex';
         } else {
             this.elements.downloadBtn.style.display = 'flex';
             const className = this.currentClass === 11 ? '11th' : '12th';
             this.elements.downloadText.textContent = `Download Class ${className} (All Materials)`;
-            if (viewToggle) viewToggle.style.display = 'none';
         }
     }
     
@@ -441,20 +382,10 @@ class StudyMaterialsApp {
             return;
         }
         
-        // Decode the URL and apply production URL transformation
-        let decodedUrl;
-        try {
-            decodedUrl = decodeURIComponent(fileUrl);
-        } catch (e) {
-            decodedUrl = fileUrl;
-        }
-        
-        const fullUrl = window.CONFIG?.getFileUrl ? window.CONFIG.getFileUrl(decodedUrl) : decodedUrl;
-        
-        if (fullUrl.endsWith('.txt')) {
-            this.openTextModal(fullUrl, fileName);
+        if (fileUrl.endsWith('.txt')) {
+            this.openTextModal(fileUrl, fileName);
         } else {
-            this.openPdfModal(fullUrl, fileName);
+            this.openPdfModal(fileUrl, fileName);
         }
     }
     
@@ -505,6 +436,7 @@ class StudyMaterialsApp {
         try {
             decodedUrl = decodeURIComponent(url);
         } catch (decodeError) {
+            // URL already decoded or malformed - use as-is
             decodedUrl = url;
         }
         
@@ -512,20 +444,21 @@ class StudyMaterialsApp {
             this.elements.textTitle.textContent = title;
         }
         
+        this.elements.textModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
         try {
             const response = await fetch(decodedUrl);
             if (!response.ok) throw new Error('Failed to load text');
             const text = await response.text();
             this.elements.textViewer.textContent = text;
             
-            this.elements.textModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
             setTimeout(() => {
                 this.elements.closeTextModal?.focus();
             }, 100);
         } catch (error) {
             this.showNotification('Failed to load text file', 'error');
+            this.closeTextModal();
         }
     }
     
