@@ -441,10 +441,20 @@ class StudyMaterialsApp {
             return;
         }
         
-        if (fileUrl.endsWith('.txt')) {
-            this.openTextModal(fileUrl, fileName);
+        // Decode the URL and apply production URL transformation
+        let decodedUrl;
+        try {
+            decodedUrl = decodeURIComponent(fileUrl);
+        } catch (e) {
+            decodedUrl = fileUrl;
+        }
+        
+        const fullUrl = window.CONFIG?.getFileUrl ? window.CONFIG.getFileUrl(decodedUrl) : decodedUrl;
+        
+        if (fullUrl.endsWith('.txt')) {
+            this.openTextModal(fullUrl, fileName);
         } else {
-            this.openPdfModal(fileUrl, fileName);
+            this.openPdfModal(fullUrl, fileName);
         }
     }
     
