@@ -13,6 +13,9 @@ class StudyMaterialsApp {
         this.currentPdfUrl = '';
         this.installBanner = null;
         this.isOnline = navigator.onLine;
+        this._eventListeners = []; // Track for cleanup
+        this._longPressTimer = null; // Track timer for cleanup
+        this._isInitialized = false; // Track initialization state
         
         this.CONSTANTS = {
             MODAL_LOAD_TIMEOUT: 3000,
@@ -24,7 +27,7 @@ class StudyMaterialsApp {
         
         if (!this.validateElements()) {
             this.showError('Failed to initialize: Required elements not found');
-            return;
+            return; // Early return - don't initialize
         }
         
         this.init();
@@ -75,8 +78,10 @@ class StudyMaterialsApp {
             this.setupOnlineDetection();
             this.updateDownloadButton();
             this.render();
+            this._isInitialized = true;
         } catch (error) {
             this.showError('Failed to initialize application');
+            return; // Stop initialization on error
         }
     }
     
@@ -140,26 +145,43 @@ class StudyMaterialsApp {
     }
     
     disableRightClick() {
-        document.addEventListener('contextmenu', (e) => {
+        const contextMenuHandler = (e) => {
             e.preventDefault();
             return false;
-        });
+        };
         
-        let longPressTimer;
-        
-        document.addEventListener('touchstart', (e) => {
-            longPressTimer = setTimeout(() => {
+        const touchStartHandler = (e) => {
+            this._longPressTimer = setTimeout(() => {
                 e.preventDefault();
             }, 500);
-        }, { passive: false });
+        };
         
-        document.addEventListener('touchend', () => {
-            clearTimeout(longPressTimer);
-        });
+        const touchEndHandler = () => {
+            if (this._longPressTimer) {
+                clearTimeout(this._longPressTimer);
+                this._longPressTimer = null;
+            }
+        };
         
-        document.addEventListener('touchmove', () => {
-            clearTimeout(longPressTimer);
-        });
+        const touchMoveHandler = () => {
+            if (this._longPressTimer) {
+                clearTimeout(this._longPressTimer);
+                this._longPressTimer = null;
+            }
+        };
+        
+        document.addEventListener('contextmenu', contextMenuHandler);
+        document.addEventListener('touchstart', touchStartHandler, { passive: false });
+        document.addEventListener('touchend', touchEndHandler);
+        document.addEventListener('touchmove', touchMoveHandler);
+        
+        // Store for cleanup
+        this._eventListeners.push(
+            { element: document, event: 'contextmenu', handler: contextMenuHandler },
+            { element: document, event: 'touchstart', handler: touchStartHandler },
+            { element: document, event: 'touchend', handler: touchEndHandler },
+            { element: document, event: 'touchmove', handler: touchMoveHandler }
+        );
     }
     
     setupOnlineDetection() {
@@ -275,6 +297,12 @@ class StudyMaterialsApp {
     handleClassChange(e) {
         const btn = e.target.closest('.tab');
         if (!btn) return;
+        
+        // Clear pending search to prevent race condition
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+        }
         
         document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -698,6 +726,9 @@ class StudyMaterialsApp {
             
             if (!data || !data.categories) return '';
             
+            // Sanitize color to prevent XSS via class injection
+            const safeColor = this.sanitizeText(String(config.color || 'resources'));
+            
             const categoriesHTML = Object.entries(data.categories).map(([category, pdfs]) => 
                 this.generateCategoryHTML(category, pdfs)
             ).join('');
@@ -705,7 +736,7 @@ class StudyMaterialsApp {
             return `
                 <div class="subject">
                     <div class="subject-head">
-                        <div class="icon ${this.sanitizeText(config.color)}" aria-hidden="true">${this.sanitizeText(config.icon)}</div>
+                        <div class="icon ${safeColor}" aria-hidden="true">${this.sanitizeText(config.icon)}</div>
                         <h2 class="subject-title">${this.sanitizeText(subject)}</h2>
                     </div>
                     ${categoriesHTML}
@@ -802,7 +833,16 @@ class StudyMaterialsApp {
         document.body.appendChild(toast);
         
         const closeBtn = toast.querySelector('.toast-close');
+        let autoRemoveTimer = null;
+        
         const removeToast = () => {
+            // Clear timer if exists
+            if (autoRemoveTimer) {
+                clearTimeout(autoRemoveTimer);
+                autoRemoveTimer = null;
+            }
+            
+            // Remove toast if still in DOM
             if (toast.parentNode) {
                 toast.classList.add('removing');
                 setTimeout(() => {
@@ -813,15 +853,48 @@ class StudyMaterialsApp {
             }
         };
         
-        closeBtn.addEventListener('click', removeToast);
+        if (closeBtn) {
+            closeBtn.addEventListener('click', removeToast);
+        }
         
-        setTimeout(removeToast, 3000);
+        autoRemoveTimer = setTimeout(removeToast, 3000);
     }
     
     showError(message) {
         if (this.elements.content) {
             this.elements.content.innerHTML = `<div class="empty error">${this.sanitizeText(message)}</div>`;
         }
+    }
+    
+    /**
+     * Cleanup method to remove event listeners and timers
+     * Call this before destroying the app instance
+     */
+    destroy() {
+        // Clear timers
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+        }
+        
+        if (this._longPressTimer) {
+            clearTimeout(this._longPressTimer);
+            this._longPressTimer = null;
+        }
+        
+        // Remove event listeners
+        this._eventListeners.forEach(({ element, event, handler }) => {
+            element.removeEventListener(event, handler);
+        });
+        this._eventListeners = [];
+        
+        // Pause and cleanup audio if exists
+        if (window.musicApp && window.musicApp.audio) {
+            window.musicApp.audio.pause();
+            window.musicApp.audio.src = '';
+        }
+        
+        this._isInitialized = false;
     }
 }
 
