@@ -62,7 +62,6 @@ class StudyMaterialsApp {
         try {
             // Verify config is loaded
             if (!window.SUBJECT_CONFIG) {
-                console.error('SUBJECT_CONFIG not loaded! Defining fallback...');
                 window.SUBJECT_CONFIG = {
                     Physics: { icon: 'P', color: 'physics' },
                     Chemistry: { icon: 'C', color: 'chemistry' },
