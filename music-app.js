@@ -14,6 +14,7 @@ class MusicApp {
         this.isRepeat = false;
         this.audio = new Audio();
         this._lastDownloadTime = 0; // Rate limiting for downloads
+        this._isLoading = false; // Prevent concurrent play operations
 
         this.elements = {
             player: document.getElementById('musicPlayer'),
@@ -280,11 +281,18 @@ class MusicApp {
 
     playSong(index) {
         if (index < 0 || index >= this.currentQueue.length) return;
+        
+        // Prevent concurrent play operations
+        if (this._isLoading) return;
+        this._isLoading = true;
 
         this.currentIndex = index;
         const song = this.currentQueue[this.currentIndex];
 
+        // Stop current playback first
+        this.audio.pause();
         this.audio.src = song.src;
+        
         this.audio.play()
             .then(() => {
                 this.isPlaying = true;
@@ -294,6 +302,11 @@ class MusicApp {
             })
             .catch((error) => {
                 if (window.app) window.app.showNotification('Could not play song: ' + error.message, 'error');
+                this.isPlaying = false;
+                this.updatePlayIcon();
+            })
+            .finally(() => {
+                this._isLoading = false;
             });
 
         this.elements.player?.classList.remove('hidden');
@@ -353,6 +366,10 @@ class MusicApp {
 
         if (currentSong) {
             this.currentIndex = this.currentQueue.findIndex(s => s.id === currentSong.id);
+            // If song not found after shuffle, default to first song
+            if (this.currentIndex === -1 && this.currentQueue.length > 0) {
+                this.currentIndex = 0;
+            }
         }
     }
 
@@ -372,8 +389,10 @@ class MusicApp {
         document.querySelectorAll('.music-card').forEach(card => card.classList.remove('playing'));
         if (this.isPlaying && this.currentIndex !== -1) {
             const currentSong = this.currentQueue[this.currentIndex];
-            if (currentSong) {
-                const playingCard = document.querySelector('.music-card[data-id="' + String(currentSong.id) + '"]');
+            if (currentSong && currentSong.id !== undefined) {
+                // Safely escape ID for querySelector
+                const escapedId = CSS.escape ? CSS.escape(String(currentSong.id)) : String(currentSong.id).replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, '\\$&');
+                const playingCard = document.querySelector(`.music-card[data-id="${escapedId}"]`);
                 if (playingCard) {
                     playingCard.classList.add('playing');
                 }
