@@ -30,6 +30,13 @@ window.STUDY_MATERIALS = {
                     { name: 'Chemical Equilibrium', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/CHEMICAL EQUILIBRIUM_MICRO_XI.pdf' },
                     { name: 'Ionic Equilibrium', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Physical Chemistry/IONIC EQUILIBRIUM_MICRO_XI.pdf' }
                 ],
+                'Physical Chemistry EaJEE Notes Solution': [
+                    { name: '01. Some Basic Concepts of Chemistry', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/01. Some basic concepts of chemistry.pdf' },
+                    { name: '02. Structure of Atom', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/02. Structure of atom.pdf' },
+                    { name: '04. Chemical Equilibrium', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/04. Chemical Equilibrium.pdf' },
+                    { name: '05. Ionic Equilibrium', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/05. Ionic Equilibrium.pdf' },
+                    { name: '10. States of Matter', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/10. States of Matter.pdf' }
+                ],
                 'Inorganic Chemistry': [
                     { name: 'Periodic Properties', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Inorganic Chemistry/PERIODIC PROPERTIES_MICRO_XI.pdf' },
                     { name: 'Chemical Bonding (Q.B.)', file: 'Vibrant Academy Modules/Class 11th/Chemistry/Inorganic Chemistry/CHEMICAL BONDING (Q.B.)_MICRO_XI.pdf' }
@@ -118,6 +125,16 @@ STUDY_MATERIALS[12].Chemistry.categories['Physical Chemistry'].push(
     { name: 'Stoichiometry-II (Redox & Equivalent Concepts)', file: 'Vibrant Academy Modules/Class 12th/Chemistry/Physical Chemistry/STOICHIOMETRY-II_(REDOX & EQUIVALENT CONCEPTS)_MEGA_XII.pdf' }
 );
 
+STUDY_MATERIALS[12].Chemistry.categories['Physical Chemistry EaJEE Notes Solution'] = [
+    { name: '03. Thermodynamics', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/03. Thermodynamics.pdf' },
+    { name: '06. Redox Reaction', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/06. Redox reaction.pdf' },
+    { name: '07. Solutions', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/07. Solutions.pdf' },
+    { name: '08. Electrochemistry', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/08. Electrochemistry.pdf' },
+    { name: '09. Chemical Kinetics', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/09. Chemical Kinetics.pdf' },
+    { name: '11. Solid State', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/11. Solid State.pdf' },
+    { name: '12. Surface Chemistry', file: 'Vibrant Academy Modules/Phyiscal Chemistry EaJEE Notes Solution/12. Surface Chemistry.pdf' }
+];
+
 STUDY_MATERIALS[12].Chemistry.categories['Inorganic Chemistry'] = [
     { name: 'Chemical Bonding', file: 'Vibrant Academy Modules/Class 12th/Chemistry/Inorganic Chemistry/CHEMICAL BONDING_MEGA_XII.pdf' },
     { name: 'Coordination Compounds', file: 'Vibrant Academy Modules/Class 12th/Chemistry/Inorganic Chemistry/COORDINATION COMPOUNDS_MEGA_XII.pdf' },
@@ -177,6 +194,7 @@ STUDY_MATERIALS['others'] = {
                 { name: 'Engineering Entrance Exams Guide', file: 'Vibrant Academy Modules/Others/Engineering_Entrance_Exams_Guide.pdf' }
             ],
             'CSE Resources': [
+                { name: 'Claude Code Architecture', file: 'Vibrant Academy Modules/Others/CSE/Claude Code Architecture.pdf' },
                 { name: 'Cloud Computing', file: 'Vibrant Academy Modules/Others/CSE/Cloud Computing.pdf' },
                 { name: 'DevOps Cloud', file: 'Vibrant Academy Modules/Others/CSE/DevOps Cloud.pdf' },
                 { name: 'Dorking Encyclopedia', file: 'Vibrant Academy Modules/Others/CSE/Dorking Encyclopedia.pdf' },
@@ -185,7 +203,9 @@ STUDY_MATERIALS['others'] = {
                 { name: 'DSA & Algorithms Multi-Language Edition', file: 'Vibrant Academy Modules/Others/CSE/DSA & Algorithms Multi-Language Edition.pdf' },
                 { name: 'Interview Preparation', file: 'Vibrant Academy Modules/Others/CSE/Interview Preparation.pdf' },
                 { name: 'OOP Multi-Language Edition', file: 'Vibrant Academy Modules/Others/CSE/OOP Multi-Language Edition.pdf' },
-                { name: 'System Design', file: 'Vibrant Academy Modules/Others/CSE/System Design.pdf' }
+                { name: 'System Design', file: 'Vibrant Academy Modules/Others/CSE/System Design.pdf' },
+                { name: 'THE FAIZ CODE: Laws of Power, Dynasty & Relentless Ambition (1st Edition)', file: 'Vibrant Academy Modules/Others/CSE/THE FAIZ CODE_ Laws of Power, Dynasty & Relentless Ambition First Edition.pdf' },
+                { name: 'THE FAIZ CODE: Laws of Power, Dynasty & Relentless Ambition (2nd Edition)', file: 'Vibrant Academy Modules/Others/CSE/THE FAIZ CODE_ Laws of Power, Dynasty & Relentless Ambition Second Edition.pdf' }
             ]
         }
     }
