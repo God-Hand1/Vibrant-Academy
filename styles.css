@@ -1046,7 +1046,8 @@ body {
     background: rgba(255, 71, 87, 0.1);
     border-color: var(--accent);
     color: var(--accent);
-    transform: rotate(90deg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 71, 87, 0.3);
 }
 
 .modal-close svg {
