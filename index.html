@@ -180,6 +180,25 @@
         </div>
     </div>
 
+    <div id="customDialog" class="custom-dialog">
+        <div class="custom-dialog-overlay"></div>
+        <div class="custom-dialog-content">
+            <div class="custom-dialog-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="custom-dialog-title" id="dialogTitle">Confirm Action</h3>
+            <p class="custom-dialog-message" id="dialogMessage">Are you sure?</p>
+            <div class="custom-dialog-actions">
+                <button class="custom-dialog-btn custom-dialog-btn-cancel" id="dialogCancel">Cancel</button>
+                <button class="custom-dialog-btn custom-dialog-btn-confirm" id="dialogConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script src="./config.js"></script>
     <script src="./data.js"></script>
     <script src="./music-data.js"></script>
@@ -187,6 +206,56 @@
     <script src="./music-app.js"></script>
     
     <script>
+        /**
+         * Custom Dialog System
+         */
+        function showCustomDialog(title, message) {
+            return new Promise((resolve) => {
+                const dialog = document.getElementById('customDialog');
+                const dialogTitle = document.getElementById('dialogTitle');
+                const dialogMessage = document.getElementById('dialogMessage');
+                const confirmBtn = document.getElementById('dialogConfirm');
+                const cancelBtn = document.getElementById('dialogCancel');
+                const overlay = dialog.querySelector('.custom-dialog-overlay');
+                
+                // Set content
+                dialogTitle.textContent = title;
+                dialogMessage.textContent = message;
+                
+                // Show dialog
+                dialog.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Focus confirm button
+                setTimeout(() => confirmBtn.focus(), 100);
+                
+                const closeDialog = (result) => {
+                    dialog.classList.remove('active');
+                    document.body.style.overflow = '';
+                    resolve(result);
+                    
+                    // Cleanup listeners
+                    confirmBtn.removeEventListener('click', handleConfirm);
+                    cancelBtn.removeEventListener('click', handleCancel);
+                    overlay.removeEventListener('click', handleCancel);
+                    document.removeEventListener('keydown', handleKeydown);
+                };
+                
+                const handleConfirm = () => closeDialog(true);
+                const handleCancel = () => closeDialog(false);
+                const handleKeydown = (e) => {
+                    if (e.key === 'Escape') handleCancel();
+                    if (e.key === 'Enter') handleConfirm();
+                };
+                
+                // Attach listeners
+                confirmBtn.addEventListener('click', handleConfirm);
+                cancelBtn.addEventListener('click', handleCancel);
+                overlay.addEventListener('click', handleCancel);
+                document.addEventListener('keydown', handleKeydown);
+            });
+        }
+        
         /**
          * Service Worker Registration with no-cache policy
          */
@@ -208,10 +277,15 @@
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             if (newWorker) {
-                                newWorker.addEventListener('statechange', () => {
+                                newWorker.addEventListener('statechange', async () => {
                                     if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                        // New version available - notify user
-                                        if (confirm('New version available! Reload to update?')) {
+                                        // New version available - notify user with custom dialog
+                                        const shouldUpdate = await showCustomDialog(
+                                            'Update Available',
+                                            'A new version of Vibrant Academy is available. Would you like to reload and update now?'
+                                        );
+                                        
+                                        if (shouldUpdate) {
                                             newWorker.postMessage({ type: 'SKIP_WAITING' });
                                             window.location.reload();
                                         }
