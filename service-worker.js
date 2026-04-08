@@ -121,6 +121,26 @@ self.addEventListener('fetch', (event) => {
                 if (!response || response.status !== 200 || response.type === 'opaque') {
                     return response;
                 }
+                
+                // Validate Content-Type to prevent cache poisoning
+                const contentType = response.headers.get('Content-Type') || '';
+                const safeContentTypes = [
+                    'text/html',
+                    'text/css',
+                    'text/javascript',
+                    'application/javascript',
+                    'application/json',
+                    'image/',
+                    'audio/',
+                    'font/',
+                    'application/pdf'
+                ];
+                
+                const isSafeContentType = safeContentTypes.some(type => contentType.includes(type));
+                
+                if (!isSafeContentType) {
+                    return response;
+                }
 
                 // Clone response for caching
                 const responseToCache = response.clone();
