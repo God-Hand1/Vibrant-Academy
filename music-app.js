@@ -170,7 +170,6 @@ class MusicApp {
                 window.app.showNotification(`Downloading: ${safeTitle}`, 'success');
             }
         } catch (error) {
-            console.error('Download failed:', error);
             if (window.app) {
                 window.app.showNotification('Download failed. Please try again.', 'error');
             }
