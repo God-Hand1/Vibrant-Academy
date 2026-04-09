@@ -26,9 +26,10 @@ window.MUSIC_LIBRARY = [
     { id: 22, title: 'High On You', src: 'Songs/Sad/High On You.mp3', folder: 'Sad', artist: 'Jind Universe' },
     { id: 23, title: 'In The Sea', src: 'Songs/Sad/In The Sea.mp3', folder: 'Coding', artist: 'Marie Madeleine' },
     { id: 24, title: 'In The Stars', src: 'Songs/Sad/In The Stars.mp3', folder: 'Sad', artist: 'Benson Boone' },
-    { id: 25, title: 'Kamin', src: 'Songs/Sad/Kamin.mp3', folder: 'Coding', artist: 'Emin & Jony' },
-    { id: 26, title: 'Love Story', src: 'Songs/Sad/Love Story.mp3', folder: 'Sad', artist: 'Indila' },
-    { id: 27, title: 'One Love', src: 'Songs/Sad/One Love.mp3', folder: 'Sad', artist: 'Shubh' },
-    { id: 28, title: 'To the Stars', src: 'Songs/Sad/To the Stars.mp3', folder: 'Sad', artist: 'Modestep' },
-    { id: 29, title: 'You And Me', src: 'Songs/Sad/You And Me.mp3', folder: 'Sad', artist: 'Shubh' }
+    { id: 25, title: 'Ishqa Ve', src: 'Songs/Sad/Ishqa Ve.mp3', folder: 'Sad', artist: 'Zeeshan Ali' },
+    { id: 26, title: 'Kamin', src: 'Songs/Sad/Kamin.mp3', folder: 'Coding', artist: 'Emin & Jony' },
+    { id: 27, title: 'Love Story', src: 'Songs/Sad/Love Story.mp3', folder: 'Sad', artist: 'Indila' },
+    { id: 28, title: 'One Love', src: 'Songs/Sad/One Love.mp3', folder: 'Sad', artist: 'Shubh' },
+    { id: 29, title: 'To the Stars', src: 'Songs/Sad/To the Stars.mp3', folder: 'Sad', artist: 'Modestep' },
+    { id: 30, title: 'You And Me', src: 'Songs/Sad/You And Me.mp3', folder: 'Sad', artist: 'Shubh' }
 ];
