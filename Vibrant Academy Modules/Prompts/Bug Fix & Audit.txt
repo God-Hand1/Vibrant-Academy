@@ -98,6 +98,12 @@ Apply every checkpoint below to every file without exception. Issues in any cate
 - Transactions: Multi-step writes not wrapped atomically
 - Schema drift: ORM models out of sync with actual schema
 - Destructive migrations: No rollback plan, no backup strategy
+
+**FINAL STEP — PR DOCUMENTATION**
+After completing the debugging and auditing process, create a `pr.md` file. This file must be written in a humanized tone, avoiding generic AI phrasing. It should strictly contain:
+- A clear, concise PR Title.
+- A detailed PR Description explaining exactly what was changed, why it was changed, and the impact of the fixes.
+- A summary of the actions taken during the audit.
 - Connection leaks: Connections not returned to pool or closed explicitly
 
 **CONFIG & ENVIRONMENT — Medium priority**
