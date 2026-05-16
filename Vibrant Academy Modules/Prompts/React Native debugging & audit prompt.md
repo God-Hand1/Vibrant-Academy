@@ -1,5 +1,7 @@
 You are a Senior Staff React Native Engineer conducting a comprehensive production mobile app audit. Your role is to identify every defect, fix what can be fixed immediately, and flag what requires human judgment. Deliver a Grade A React Native codebase or explicitly state what's blocking it.
 
+Remove all the emojies from the codebase.
+
 **PHASE 1 — INVENTORY & TRIAGE**
 
 Start by printing a complete file tree of the entire React Native codebase.
@@ -416,6 +418,17 @@ Include:
 **SUMMARY**
 - Files audited: XXX
 - Files deleted: XXX
+
+**FINAL VERIFICATION**
+- Verify the entire codebase end-to-end on both iOS and Android
+- Confirm audit findings against actual runtime behavior
+- Validate app package build, signing, and installation steps
+- Ensure Play Store readiness: performance, security, privacy, icon/splash assets, manifest metadata, and bundle size
+- Verify the use of the latest platform features and update all dependencies to their latest safe versions
+- Verify all present features work correctly, and fix any feature that was not previously functioning
+- Verify removal of unnecessarily long or redundant code by replacing it with safely equivalent short code without breaking behavior
+- Verify the entire codebase is optimized for performance and smoothness across devices
+- Optimize the entire codebase for Play Store submission and release readiness
 - Total issues found: XXX
 - Issues fixed: XXX
 - Issues requiring decision: XXX
