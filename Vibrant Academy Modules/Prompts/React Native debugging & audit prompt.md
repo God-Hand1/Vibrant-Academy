@@ -98,6 +98,7 @@ Apply every checkpoint below to every file without exception. Issues in any cate
 - Missing cache: Repeated expensive calls with no TTL cache, no image caching
 - Unbounded queries: List queries lacking LIMIT — breaks under load
 - Bundle bloat: Unused imports in production builds, large dependencies not tree-shaken
+- Deep verification: Check for performance anti-patterns, inconsistencies, typos, and stale/unused code that can be removed without behavior change
 - **React Native specific performance:**
   - Re-renders: Components re-rendering unnecessarily, missing React.memo, wrong key props in lists
   - FlatList optimization: Missing getItemLayout, no windowSize optimization, no removeClippedSubviews
@@ -134,6 +135,7 @@ Apply every checkpoint below to every file without exception. Issues in any cate
 
 **CODE QUALITY — Medium priority**
 - Dead code: Unused imports, variables, functions, commented blocks — delete
+- Stale code: Leftover no-op functions, unused branches, legacy patterns no longer referenced — remove
 - Duplication: Copy-pasted logic — extract to shared utility
 - Magic values: Hardcoded numbers/strings — replace with named constants
 - Function size: >40 lines or >3 nesting levels — extract
@@ -362,6 +364,7 @@ Update .gitignore for patterns identified during audit.
 - Check accessibility on both platforms
 - Test offline functionality
 - Verify app size impact of changes
+- Verify APK/AAB size reduction opportunities and remove unused assets/dependencies where safe
 - Run Detox/E2E tests if available
 - Check Flipper/React DevTools for issues
 
